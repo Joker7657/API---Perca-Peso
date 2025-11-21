@@ -18,13 +18,31 @@ for candidate in "${JAVA_HOME_CANDIDATES[@]}"; do
   fi
 done
 
+# If JAVA_HOME still not set, try to detect via `which java` and resolve its parent dirs
+if [ -z "${JAVA_HOME-}" ]; then
+  if command -v java >/dev/null 2>&1; then
+    java_cmd=$(readlink -f "$(command -v java)")
+    # java_cmd -> .../bin/java, so parent dir twice is JAVA_HOME
+    java_parent=$(dirname "$(dirname "$java_cmd")")
+    if [ -x "$java_parent/bin/java" ]; then
+      export JAVA_HOME="$java_parent"
+      export PATH="$JAVA_HOME/bin:$PATH"
+    fi
+  fi
+fi
+
 function java_major_version() {
-  if ! command -v java >/dev/null 2>&1; then
+  local java_cmd
+  if command -v java >/dev/null 2>&1; then
+    java_cmd="$(command -v java)"
+  elif [ -n "${JAVA_HOME-}" ] && [ -x "${JAVA_HOME}/bin/java" ]; then
+    java_cmd="${JAVA_HOME}/bin/java"
+  else
     echo "0"
     return
   fi
   # Capture output like 'openjdk version "17.0.1"'
-  ver=$(java -version 2>&1 | head -n1)
+  ver=$($java_cmd -version 2>&1 | head -n1)
   # Extract major version
   if [[ $ver =~ "version \"([0-9]+)" ]]; then
     echo "${BASH_REMATCH[1]}"
