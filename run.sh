@@ -18,8 +18,33 @@ for candidate in "${JAVA_HOME_CANDIDATES[@]}"; do
   fi
 done
 
-if [ -z "${JAVA_HOME-}" ]; then
-  echo "WARN: JAVA_HOME não detectado automaticamente. Assegure Java 17 no PATH." >&2
+function java_major_version() {
+  if ! command -v java >/dev/null 2>&1; then
+    echo "0"
+    return
+  fi
+  # Capture output like 'openjdk version "17.0.1"'
+  ver=$(java -version 2>&1 | head -n1)
+  # Extract major version
+  if [[ $ver =~ "version \"([0-9]+)" ]]; then
+    echo "${BASH_REMATCH[1]}"
+    return
+  fi
+  # older format
+  echo "0"
+}
+
+JAVA_MAJOR=$(java_major_version)
+if [ "$JAVA_MAJOR" -lt 17 ]; then
+  echo "ERRO: Java 17 ou superior é necessário. Versão detectada: $JAVA_MAJOR" >&2
+  echo "Instale/ative Java 17 e rode novamente. Exemplo temporário:" >&2
+  echo "  export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && export PATH=\"$JAVA_HOME/bin:$PATH\"" >&2
+  exit 1
+fi
+
+if ! command -v mvn >/dev/null 2>&1; then
+  echo "ERRO: Maven não encontrado. Instale o Maven (ex: apt install maven)" >&2
+  exit 1
 fi
 
 CMD=${1:-help}
