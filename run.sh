@@ -43,12 +43,12 @@ function java_major_version() {
   fi
   # Capture output like 'openjdk version "17.0.1"'
   ver=$($java_cmd -version 2>&1 | head -n1)
-  # Extract major version
-  if [[ $ver =~ "version \"([0-9]+)" ]]; then
-    echo "${BASH_REMATCH[1]}"
+  # Extract major version robustly (handles formats like: openjdk version "17.0.16" ...)
+  maj=$(echo "$ver" | sed -E 's/.*version "([0-9]+).*".*/\1/' | cut -d'.' -f1)
+  if [[ "$maj" =~ ^[0-9]+$ ]]; then
+    echo "$maj"
     return
   fi
-  # older format
   echo "0"
 }
 
