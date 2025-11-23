@@ -1,0 +1,16 @@
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/controller/ControladorRegistroDiario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/service/ServicoRegistroDiario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/AplicacaoHealthTrack.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/controller/ControladorTarefa.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/repository/RepositorioTarefa.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/service/ServicoUsuario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/controller/ControladorUsuario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/model/RegistroDiario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/model/Tarefa.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/repository/RepositorioRegistroDiario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/service/CalculadoraSaude.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/model/SistemaRecompensas.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/repository/RepositorioUsuario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/service/ServicoTarefa.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/model/Usuario.java
+/workspaces/API---Perca-Peso/health-track-api/src/main/java/com/healthtrack/repository/RepositorioBaseJSON.java

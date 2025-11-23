@@ -4,6 +4,7 @@ import com.healthtrack.model.Tarefa;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class RepositorioTarefa extends RepositorioBaseJSON<Tarefa> {
@@ -29,7 +30,7 @@ public class RepositorioTarefa extends RepositorioBaseJSON<Tarefa> {
     
     public List<Tarefa> buscarPorUsuarioId(Long usuarioId) {
         return buscarTodos().stream()
-                .filter(tarefa -> usuarioId.equals(tarefa.getUsuarioId()))
-                .toList();
+            .filter(tarefa -> usuarioId.equals(tarefa.getUsuarioId()))
+            .collect(Collectors.toList());
     }
 }

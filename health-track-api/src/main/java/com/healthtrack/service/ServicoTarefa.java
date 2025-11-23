@@ -61,12 +61,20 @@ public class ServicoTarefa {
             Usuario usuario = repositorioUsuario.buscarPorId(tarefa.getUsuarioId())
                     .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
             
-            int pontos = switch (tarefa.getDificuldade()) {
-                case "FACIL" -> 10;
-                case "MEDIO" -> 25;
-                case "DIFICIL" -> 50;
-                default -> 10;
-            };
+            int pontos;
+            switch (tarefa.getDificuldade()) {
+                case "FACIL":
+                    pontos = 10;
+                    break;
+                case "MEDIO":
+                    pontos = 25;
+                    break;
+                case "DIFICIL":
+                    pontos = 50;
+                    break;
+                default:
+                    pontos = 10;
+            }
             
             usuario.getSistemaRecompensas().adicionarPontos(pontos);
             

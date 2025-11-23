@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Repository
@@ -31,8 +32,8 @@ public class RepositorioRegistroDiario extends RepositorioBaseJSON<RegistroDiari
     
     public List<RegistroDiario> buscarPorUsuarioId(Long usuarioId) {
         return buscarTodos().stream()
-                .filter(registro -> usuarioId.equals(registro.getUsuarioId()))
-                .toList();
+            .filter(registro -> usuarioId.equals(registro.getUsuarioId()))
+            .collect(Collectors.toList());
     }
     
     public Optional<RegistroDiario> buscarPorUsuarioIdEData(Long usuarioId, LocalDate data) {
