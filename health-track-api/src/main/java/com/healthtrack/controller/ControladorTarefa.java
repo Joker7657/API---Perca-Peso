@@ -25,6 +25,11 @@ public class ControladorTarefa {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping
+    public List<Tarefa> listarTodasTarefas() {
+        return servicoTarefa.buscarTodosTarefas();
+    }
     
     @GetMapping("/usuario/{usuarioId}")
     public List<Tarefa> listarTarefasDoUsuario(@PathVariable Long usuarioId) {

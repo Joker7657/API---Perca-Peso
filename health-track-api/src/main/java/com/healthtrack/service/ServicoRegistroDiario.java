@@ -85,4 +85,8 @@ public class ServicoRegistroDiario {
     public Optional<RegistroDiario> buscarRegistroDeHoje(Long usuarioId) {
         return repositorioRegistroDiario.buscarPorUsuarioIdEData(usuarioId, LocalDate.now());
     }
+
+    public List<RegistroDiario> buscarTodosRegistros() {
+        return repositorioRegistroDiario.buscarTodos();
+    }
 }

@@ -25,6 +25,11 @@ public class ControladorRegistroDiario {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping
+    public List<RegistroDiario> listarTodosRegistros() {
+        return servicoRegistroDiario.buscarTodosRegistros();
+    }
     
     @GetMapping("/usuario/{usuarioId}")
     public List<RegistroDiario> listarRegistrosDoUsuario(@PathVariable Long usuarioId) {

@@ -91,4 +91,8 @@ public class ServicoTarefa {
         }
         repositorioTarefa.removerPorId(id);
     }
+
+    public List<Tarefa> buscarTodosTarefas() {
+        return repositorioTarefa.buscarTodos();
+    }
 }

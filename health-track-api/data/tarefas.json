@@ -1,1 +1,16 @@
-[]
+[
+	{
+		"id": 1,
+		"usuarioId": 1,
+		"titulo": "Caminhada 30 min",
+		"descricao": "Caminhada leve",
+		"categoria": "Atividade",
+		"dificuldade": "FACIL",
+		"caloriasEstimadas": 150,
+		"tempoMinutos": 30,
+		"dataHora": "2025-11-30T07:00:00",
+		"concluida": false,
+		"dataConclusao": null,
+		"dataCriacao": "2025-11-30T06:00:00"
+	}
+]
