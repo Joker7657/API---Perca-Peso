@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Track API - Dashboard</title>
+    <title>Health Track - Sistema de Acompanhamento de Saúde</title>
     <style>
         * {
             margin: 0;
@@ -13,184 +13,486 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            padding: 20px;
+        /* Página de Login/Cadastro */
+        #authPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
         }
 
-        h1 {
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h1 {
+            color: #dc143c;
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header-subtitle {
+        .auth-header p {
+            color: #333;
             font-size: 1.1em;
-            opacity: 0.9;
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 30px;
         }
 
-        .card {
-            background: white;
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: #f0f0f0;
+            border: none;
             border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        .auth-tab.active {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: white;
         }
 
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #333;
             font-weight: 500;
         }
 
-        input, textarea {
+        input, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1em;
             transition: border-color 0.3s;
         }
 
-        input:focus, textarea:focus {
+        input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            border-color: #dc143c;
         }
 
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .btn {
             width: 100%;
-            margin-top: 10px;
+            padding: 14px;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        button:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        button:active {
-            transform: translateY(0);
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.3s;
         }
 
-        .button-group {
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        /* Dashboard */
+        #dashboardPage {
+            display: none;
+        }
+
+        .dashboard-header {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(220, 20, 60, 0.3);
+            border: 1px solid #dc143c;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h2 {
+            color: #dc143c;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            color: #cccccc;
+        }
+
+        .logout-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(220, 20, 60, 0.3);
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #dc143c;
+        }
+
+        .card h3 {
+            color: #dc143c;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
             gap: 10px;
-            margin-top: 10px;
         }
 
-        .button-group button {
+        /* Métricas de Saúde */
+        .health-metric {
+            position: relative;
+            cursor: help;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #dc143c;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #cccccc;
+            font-size: 1.1em;
+            border-bottom: 2px dotted #dc143c;
+            display: inline-block;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            line-height: 1.6;
+            width: 300px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #333;
+        }
+
+        .health-metric:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sistema de Recompensas */
+        .rewards-container {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rewards-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .reward-stat {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .reward-stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .reward-stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .conquistas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .conquista {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 2em;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .conquista:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .conquista.locked {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        /* Tarefas Checklist */
+        .tasks-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: #0a0a0a;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid #dc143c;
+            border: 1px solid #333;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+            border-left-color: #8b0000;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .task-content {
             flex: 1;
-            margin: 0;
         }
 
-        .btn-delete {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .task-title {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
         }
 
-        .btn-update {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        .task-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #dc143c;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 10px;
         }
 
-        .btn-clear {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        .task-points {
+            color: #dc143c;
+            font-weight: bold;
         }
 
-        .data-list {
-            margin-top: 20px;
+        /* Histórico de Peso */
+        .weight-history {
             max-height: 400px;
             overflow-y: auto;
         }
 
-        .data-item {
-            background: #f8f9fa;
+        .weight-entry {
+            background: #0a0a0a;
             padding: 15px;
             margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #333;
         }
 
-        .data-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
+        .weight-date {
+            color: #dc143c;
+            font-weight: 600;
         }
 
-        .data-item-id {
-            color: #667eea;
+        .weight-value {
+            font-size: 1.5em;
             font-weight: bold;
+            color: #ffffff;
+        }
+
+        .weight-change {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
             font-size: 0.9em;
         }
-
-        .data-item-content {
-            margin-top: 8px;
-            color: #555;
+        .weight-change.positive {
+            background: #1a4d1a;
+            color: #90ee90;
         }
 
-        .data-item-actions {
-            margin-top: 10px;
+        .weight-change.negative {
+            background: #4d1a1a;
+            color: #ff6b6b;
+        }   color: #721c24;
+        }
+
+        /* Formulário de Registro */
+        .quick-register {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .add-task-form {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }   margin-bottom: 20px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .rewards-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc143c 0%, #8b0000 100%);
+            transition: width 0.5s;
             display: flex;
-            gap: 5px;
-        }
-
-        .data-item-actions button {
-            flex: 1;
-            padding: 8px;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-size: 0.85em;
-            margin: 0;
-        }
-
-        .message {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            display: none;
-            animation: slideIn 0.3s ease-in-out;
+            font-weight: bold;
+        }   font-weight: bold;
         }
 
         @keyframes slideIn {
@@ -198,467 +500,807 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .loading {
-            text-align: center;
-            color: #667eea;
-            padding: 20px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .tabs {
+        .stat-comparison {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
         }
 
-        .tab-button {
-            background: none;
-            border: none;
-            color: #666;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            width: auto;
-            margin: 0;
+        .stat-item {
+            text-align: center;
         }
 
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+        .stat-item-label {
+            font-size: 0.85em;
+            color: #cccccc;
+            margin-bottom: 5px;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
+        .stat-item-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc143c;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>💪 Health Track API</h1>
-            <p class="header-subtitle">Gerenciador de Saúde e Fitness</p>
-        </header>
-
-        <div class="main-grid">
-            <!-- CARD 1: Criar Usuário -->
-            <div class="card">
-                <h2>👤 Gerenciar Usuários</h2>
-                
-                <div id="usuarioMessage" class="message"></div>
-
-                <div class="form-group">
-                    <label>Nome:</label>
-                    <input type="text" id="nomeUsuario" placeholder="Ex: João Silva">
-                </div>
-
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="emailUsuario" placeholder="Ex: joao@email.com">
-                </div>
-
-                <div class="form-group">
-                    <label>Senha:</label>
-                    <input type="password" id="senhaUsuario" placeholder="Senha">
-                </div>
-
-                <div class="form-group">
-                    <label>Altura (m):</label>
-                    <input type="number" id="alturaUsuario" placeholder="Ex: 1.75" step="0.01">
-                </div>
-
-                <div class="form-group">
-                    <label>Peso Atual (kg):</label>
-                    <input type="number" id="pesoUsuario" placeholder="Ex: 80" step="0.1">
-                </div>
-
-                <div class="form-group">
-                    <label>Peso Meta (kg):</label>
-                    <input type="number" id="pesoMetaUsuario" placeholder="Ex: 75" step="0.1">
-                </div>
-
-                <button onclick="criarUsuario()">➕ Criar Usuário</button>
-                <button onclick="listarUsuarios()" class="btn-update">🔄 Atualizar Lista</button>
-
-                <div class="data-list">
-                    <h3 style="color: #667eea; margin-bottom: 10px;">Usuários Registrados:</h3>
-                    <div id="usuariosList"></div>
-                </div>
+    <!-- Página de Autenticação -->
+    <div id="authPage">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>🏃‍♂️ Health Track</h1>
+                <p>Seu companheiro de saúde e bem-estar</p>
             </div>
 
-            <!-- CARD 2: Criar Tarefa -->
-            <div class="card">
-                <h2>✅ Gerenciar Tarefas</h2>
-                
-                <div id="tarefaMessage" class="message"></div>
+            <div id="authMessage" class="message"></div>
 
-                <div class="form-group">
-                    <label>ID do Usuário:</label>
-                    <input type="number" id="usuarioIdTarefa" placeholder="Ex: 1">
-                </div>
-
-                <div class="form-group">
-                    <label>Título da Tarefa:</label>
-                    <input type="text" id="tituloTarefa" placeholder="Ex: Fazer 30 minutos de corrida">
-                </div>
-
-                <div class="form-group">
-                    <label>Descrição:</label>
-                    <textarea id="descricaoTarefa" placeholder="Descreva a tarefa..." rows="3"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Categoria:</label>
-                    <input type="text" id="categoriaTarefa" placeholder="Ex: Exercício">
-                </div>
-
-                <button onclick="criarTarefa()">➕ Criar Tarefa</button>
-                <button onclick="listarTarefas()" class="btn-update">🔄 Atualizar Lista</button>
-
-                <div class="data-list">
-                    <h3 style="color: #667eea; margin-bottom: 10px;">Tarefas Registradas:</h3>
-                    <div id="tarefasList"></div>
-                </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchTab('cadastro')">Cadastro</button>
             </div>
+
+            <!-- Formulário de Login -->
+            <form id="loginForm" class="auth-form active" onsubmit="fazerLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="loginSenha" required>
+                </div>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="cadastroForm" class="auth-form" onsubmit="fazerCadastro(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="cadastroNome" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="cadastroEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="cadastroSenha" required>
+                </div>
+                <div class="form-group">
+                    <label>Data de Nascimento</label>
+                    <input type="date" id="cadastroDataNascimento" required>
+                </div>
+                <div class="form-group">
+                    <label>Gênero</label>
+                    <select id="cadastroGenero" required>
+                        <option value="">Selecione</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMININO">Feminino</option>
+                        <option value="OUTRO">Outro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Altura (metros)</label>
+                    <input type="number" step="0.01" id="cadastroAltura" placeholder="Ex: 1.75" required>
+                </div>
+                <div class="form-group">
+                    <label>Peso Atual (kg)</label>
+                    <input type="number" step="0.1" id="cadastroPeso" placeholder="Ex: 75.5" required>
+                </div>
+                <div class="form-group">
+                    <label>Peso Meta (kg)</label>
+                    <input type="number" step="0.1" id="cadastroPesoMeta" placeholder="Ex: 70.0">
+                </div>
+                <button type="submit" class="btn">Criar Conta</button>
+            </form>
         </div>
+    </div>
 
-        <!-- CARD 3: Registros Diários -->
-        <div class="card full-width">
-            <h2>📊 Registros Diários</h2>
-            
-            <div id="registroMessage" class="message"></div>
+    <!-- Dashboard do Usuário -->
+    <div id="dashboardPage">
+        <div class="container">
+            <!-- Cabeçalho -->
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <h2 id="dashboardUserName">Bem-vindo!</h2>
+                    <p id="dashboardUserEmail"></p>
+                </div>
+                <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+            </div>
 
-            <div class="stats">
-                <div class="stat-box">
-                    <div class="stat-number" id="totalUsuarios">0</div>
-                    <div class="stat-label">Usuários</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="totalTarefas">0</div>
-                    <div class="stat-label">Tarefas</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="totalRegistros">0</div>
-                    <div class="stat-label">Registros Diários</div>
+            <!-- Sistema de Recompensas -->
+            <div class="card">
+                <h3>🏆 Sistema de Recompensas</h3>
+                <div class="rewards-container">
+                    <div class="rewards-stats">
+                        <div class="reward-stat">
+                            <div class="reward-stat-value" id="pontosTotal">0</div>
+                            <div class="reward-stat-label">Pontos</div>
+                        </div>
+                        <div class="reward-stat">
+                            <div class="reward-stat-value" id="diasConsecutivos">0</div>
+                            <div class="reward-stat-label">Dias Seguidos</div>
+                        </div>
+                        <div class="reward-stat">
+                            <div class="reward-stat-value" id="conquistasTotal">0</div>
+                            <div class="reward-stat-label">Conquistas</div>
+                        </div>
+                    </div>
+                    <h4 style="margin-bottom: 15px; opacity: 0.9;">Conquistas Desbloqueadas</h4>
+                    <div class="conquistas-grid" id="conquistasGrid">
+                        <div class="conquista locked" title="Bloqueado">🏅</div>
+                        <div class="conquista locked" title="Bloqueado">⭐</div>
+                        <div class="conquista locked" title="Bloqueado">🔥</div>
+                        <div class="conquista locked" title="Bloqueado">💪</div>
+                        <div class="conquista locked" title="Bloqueado">🎯</div>
+                        <div class="conquista locked" title="Bloqueado">👑</div>
+                    </div>
                 </div>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button onclick="carregarEstatisticas()" class="btn-update">📈 Carregar Estatísticas</button>
-            </div>
+            <!-- Grid Principal -->
+            <div class="dashboard-grid">
+                <!-- Métricas de Saúde -->
+                <div class="card">
+                    <h3>📊 Métricas de Saúde</h3>
+                    
+                    <div class="health-metric">
+                        <div class="metric-label">IMC (Índice de Massa Corporal)</div>
+                        <div class="metric-value" id="imcValue">--</div>
+                        <div class="tooltip">
+                            <strong>IMC - Índice de Massa Corporal</strong><br>
+                            É uma medida que relaciona seu peso e altura.<br><br>
+                            <strong>Classificação:</strong><br>
+                            • Abaixo de 18.5: Abaixo do peso<br>
+                            • 18.5 - 24.9: Peso normal<br>
+                            • 25.0 - 29.9: Sobrepeso<br>
+                            • Acima de 30: Obesidade
+                        </div>
+                    </div>
 
-            <div class="data-list" style="margin-top: 20px;">
-                <h3 style="color: #667eea; margin-bottom: 10px;">Últimos Registros:</h3>
-                <div id="registrosList"></div>
+                    <div class="health-metric" style="margin-top: 30px;">
+                        <div class="metric-label">TMB (Taxa Metabólica Basal)</div>
+                        <div class="metric-value" id="tmbValue">--</div>
+                        <div class="tooltip">
+                            <strong>TMB - Taxa Metabólica Basal</strong><br>
+                            É a quantidade de calorias que seu corpo precisa em repouso para manter funções vitais.<br><br>
+                            Útil para planejar sua dieta e atingir suas metas de peso!
+                        </div>
+                    </div>
+
+                    <div class="stat-comparison">
+                        <div class="stat-item">
+                            <div class="stat-item-label">Peso Inicial</div>
+                            <div class="stat-item-value" id="pesoInicialDisplay">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-label">Peso Atual</div>
+                            <div class="stat-item-value" id="pesoAtualDisplay">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-label">Peso Meta</div>
+                            <div class="stat-item-value" id="pesoMetaDisplay">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-label">Progresso</div>
+                            <div class="stat-item-value" id="progressoPercentual" style="color: #dc143c;">--</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressoPeso" style="width: 0%">0%</div>
+                    </div>
+                </div>
+
+                <!-- Tarefas do Dia -->
+                <div class="card">
+                    <h3>✅ Tarefas de Hoje</h3>
+                    
+                    <div class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" id="novaTarefaTitulo" placeholder="Nome da tarefa...">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="novaTarefaDescricao" placeholder="Descrição (opcional)...">
+                        </div>
+                        <div class="form-row">
+                            <select id="novaTarefaCategoria">
+                                <option value="EXERCICIO">Exercício</option>
+                                <option value="ALIMENTACAO">Alimentação</option>
+                                <option value="HIDRATACAO">Hidratação</option>
+                                <option value="SONO">Sono</option>
+                                <option value="OUTRO">Outro</option>
+                            </select>
+                            <select id="novaTarefaDificuldade">
+                                <option value="FACIL">Fácil (+10pts)</option>
+                                <option value="MEDIO">Médio (+25pts)</option>
+                                <option value="DIFICIL">Difícil (+50pts)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <select id="novaTarefaFrequencia" onchange="mostrarDiasSemana()">
+                                <option value="UNICA">Tarefa Única</option>
+                                <option value="DIARIA">Diária</option>
+                                <option value="SEMANAL">Semanal</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="diasSemanaContainer" style="display: none;">
+                            <label style="font-size: 0.9em; margin-bottom: 10px;">Selecione os dias:</label>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="MONDAY" class="dia-checkbox"> Seg
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="TUESDAY" class="dia-checkbox"> Ter
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="WEDNESDAY" class="dia-checkbox"> Qua
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="THURSDAY" class="dia-checkbox"> Qui
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="FRIDAY" class="dia-checkbox"> Sex
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="SATURDAY" class="dia-checkbox"> Sáb
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                    <input type="checkbox" value="SUNDAY" class="dia-checkbox"> Dom
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="adicionarTarefa()">Adicionar Tarefa</button>
+                    </div>
+
+                    <div class="tasks-list" id="tasksList">
+                        <p style="text-align: center; color: #999;">Nenhuma tarefa para hoje</p>
+                    </div>
+                </div>
+
+                <!-- Registro de Peso -->
+                <div class="card">
+                    <h3>⚖️ Histórico de Peso</h3>
+                    
+                    <div class="quick-register">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Peso (kg)</label>
+                                <input type="number" step="0.1" id="novoPeso" placeholder="Ex: 75.5">
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: flex-end;">
+                                <button class="btn" type="button" onclick="registrarPeso(); return false;">Registrar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weight-history" id="weightHistory">
+                        <p style="text-align: center; color: #999;">Nenhum registro ainda</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Use relative path so the UI works regardless of port / host
         const API_URL = '/api';
+        let usuarioAtual = null;
 
-        // Mostrar mensagem
-        function showMessage(elementId, message, type) {
-            const msgElement = document.getElementById(elementId);
-            msgElement.className = `message ${type}`;
-            msgElement.textContent = message;
-            setTimeout(() => {
-                msgElement.style.display = 'none';
-            }, 3000);
+        // Alternar entre abas de Login e Cadastro
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('cadastroForm').classList.add('active');
+            }
+            
+            hideMessage('authMessage');
         }
 
-        // USUÁRIOS
-        async function criarUsuario() {
-            const nome = document.getElementById('nomeUsuario').value;
-            const email = document.getElementById('emailUsuario').value;
-            const altura = parseFloat(document.getElementById('alturaUsuario').value);
-            const pesoAtual = parseFloat(document.getElementById('pesoUsuario').value);
-            const senha = document.getElementById('senhaUsuario').value;
-            const pesoMeta = parseFloat(document.getElementById('pesoMetaUsuario').value);
+        // Fazer Login
+        async function fazerLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginSenha').value;
 
-            if (!nome || !email || !senha || !altura || !pesoAtual) {
-                showMessage('usuarioMessage', '❌ Preencha todos os campos', 'error');
-                return;
+            try {
+                const response = await fetch(`${API_URL}/usuarios/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    usuarioAtual = data.usuario;
+                    localStorage.setItem('usuarioId', usuarioAtual.id);
+                    mostrarDashboard();
+                } else {
+                    showMessage('authMessage', '❌ ' + data.mensagem, 'error');
+                }
+            } catch (error) {
+                showMessage('authMessage', '❌ Erro de conexão: ' + error.message, 'error');
             }
+        }
+
+        // Fazer Cadastro
+        async function fazerCadastro(event) {
+            event.preventDefault();
+            
+            const usuario = {
+                nome: document.getElementById('cadastroNome').value,
+                email: document.getElementById('cadastroEmail').value,
+                senha: document.getElementById('cadastroSenha').value,
+                dataNascimento: document.getElementById('cadastroDataNascimento').value,
+                genero: document.getElementById('cadastroGenero').value,
+                altura: parseFloat(document.getElementById('cadastroAltura').value),
+                pesoAtual: parseFloat(document.getElementById('cadastroPeso').value),
+                pesoMeta: parseFloat(document.getElementById('cadastroPesoMeta').value) || null
+            };
 
             try {
                 const response = await fetch(`${API_URL}/usuarios`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome, email, senha, altura, pesoAtual, pesoMeta })
+                    body: JSON.stringify(usuario)
                 });
 
                 if (response.ok) {
-                    showMessage('usuarioMessage', '✅ Usuário criado com sucesso!', 'success');
-                    document.getElementById('nomeUsuario').value = '';
-                    document.getElementById('emailUsuario').value = '';
-                    document.getElementById('alturaUsuario').value = '';
-                    document.getElementById('pesoUsuario').value = '';
-                    document.getElementById('pesoMetaUsuario').value = '';
-                    listarUsuarios();
+                    const usuarioCriado = await response.json();
+                    showMessage('authMessage', '✅ Conta criada com sucesso! Faça login.', 'success');
+                    
+                    // Limpar formulário e voltar para login
+                    document.getElementById('cadastroForm').reset();
+                    setTimeout(() => {
+                        switchTab('login');
+                        document.getElementById('loginEmail').value = usuario.email;
+                    }, 2000);
                 } else {
-                    showMessage('usuarioMessage', '❌ Erro ao criar usuário', 'error');
+                    showMessage('authMessage', '❌ Erro ao criar conta. Email já cadastrado?', 'error');
                 }
             } catch (error) {
-                showMessage('usuarioMessage', '❌ Erro de conexão: ' + error.message, 'error');
+                showMessage('authMessage', '❌ Erro de conexão: ' + error.message, 'error');
             }
         }
 
-        async function listarUsuarios() {
+        // Mostrar Dashboard
+        async function mostrarDashboard() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            
+            // Atualizar informações do usuário
+            document.getElementById('dashboardUserName').textContent = `Olá, ${usuarioAtual.nome}! 👋`;
+            document.getElementById('dashboardUserEmail').textContent = usuarioAtual.email;
+            
+            // Atualizar métricas
+            document.getElementById('imcValue').textContent = usuarioAtual.imc ? usuarioAtual.imc.toFixed(1) : '--';
+            document.getElementById('tmbValue').textContent = usuarioAtual.tmb ? usuarioAtual.tmb.toFixed(0) + ' kcal' : '--';
+            
+            // Buscar peso inicial do primeiro registro
+            let pesoInicial = usuarioAtual.pesoAtual;
             try {
-                const response = await fetch(`${API_URL}/usuarios`);
-                const usuarios = await response.json();
+                const responseRegistros = await fetch(`${API_URL}/registros-diarios/usuario/${usuarioAtual.id}`);
+                if (responseRegistros.ok) {
+                    const registros = await responseRegistros.json();
+                    if (registros.length > 0) {
+                        // Ordenar por data mais antiga primeiro
+                        registros.sort((a, b) => new Date(a.data) - new Date(b.data));
+                        pesoInicial = registros[0].peso;
+                    }
+                }
+            } catch (error) {
+                console.log('Erro ao buscar registros:', error);
+            }
+            
+            document.getElementById('pesoInicialDisplay').textContent = pesoInicial.toFixed(1) + ' kg';
+            document.getElementById('pesoAtualDisplay').textContent = usuarioAtual.pesoAtual.toFixed(1) + ' kg';
+            document.getElementById('pesoMetaDisplay').textContent = (usuarioAtual.pesoMeta || '--') + ' kg';
+            
+            // Calcular progresso em relação à meta
+            if (usuarioAtual.pesoMeta && usuarioAtual.pesoAtual && pesoInicial) {
+                const diferencaTotal = Math.abs(pesoInicial - usuarioAtual.pesoMeta);
+                const diferencaAtual = Math.abs(pesoInicial - usuarioAtual.pesoAtual);
+                const porcentagem = diferencaTotal > 0 ? (diferencaAtual / diferencaTotal) * 100 : 0;
+                const progressoFinal = Math.min(100, Math.max(0, porcentagem));
                 
-                const lista = document.getElementById('usuariosList');
-                lista.innerHTML = '';
+                document.getElementById('progressoPeso').style.width = progressoFinal + '%';
+                document.getElementById('progressoPeso').textContent = progressoFinal.toFixed(1) + '%';
+                document.getElementById('progressoPercentual').textContent = progressoFinal.toFixed(1) + '%';
+            }
+            
+            // Atualizar recompensas
+            if (usuarioAtual.sistemaRecompensas) {
+                document.getElementById('pontosTotal').textContent = usuarioAtual.sistemaRecompensas.pontos || 0;
+                document.getElementById('diasConsecutivos').textContent = usuarioAtual.sistemaRecompensas.diasConsecutivos || 0;
+                document.getElementById('conquistasTotal').textContent = usuarioAtual.sistemaRecompensas.conquistas?.length || 0;
+                
+                // Atualizar conquistas
+                const conquistasGrid = document.getElementById('conquistasGrid');
+                const conquistasDisponiveis = ['🏅', '⭐', '🔥', '💪', '🎯', '👑'];
+                const conquistasDesbloqueadas = usuarioAtual.sistemaRecompensas.conquistas || [];
+                
+                conquistasGrid.innerHTML = '';
+                conquistasDisponiveis.forEach((icon, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'conquista' + (index < conquistasDesbloqueadas.length ? '' : ' locked');
+                    div.textContent = icon;
+                    div.title = conquistasDesbloqueadas[index] || 'Bloqueado';
+                    conquistasGrid.appendChild(div);
+                });
+            }
+            
+            // Carregar tarefas
+            await carregarTarefas();
+            
+            // Carregar histórico de peso
+            await carregarHistoricoPeso();
+        }
 
-                if (usuarios.length === 0) {
-                    lista.innerHTML = '<p style="color: #999; text-align: center;">Nenhum usuário registrado</p>';
+        // Mostrar/Esconder seleção de dias da semana
+        function mostrarDiasSemana() {
+            const frequencia = document.getElementById('novaTarefaFrequencia').value;
+            const container = document.getElementById('diasSemanaContainer');
+            container.style.display = frequencia === 'SEMANAL' ? 'block' : 'none';
+        }
+
+        // Carregar Tarefas
+        async function carregarTarefas() {
+            try {
+                const response = await fetch(`${API_URL}/tarefas/usuario/${usuarioAtual.id}/hoje`);
+                const tarefasHoje = await response.json();
+                
+                const tasksList = document.getElementById('tasksList');
+                tasksList.innerHTML = '';
+                
+                if (tarefasHoje.length === 0) {
+                    tasksList.innerHTML = '<p style="text-align: center; color: #999;">Nenhuma tarefa para hoje</p>';
                     return;
                 }
-
-                usuarios.forEach(usuario => {
-                    const item = document.createElement('div');
-                    item.className = 'data-item';
-                    item.innerHTML = `
-                        <div class="data-item-id">ID: ${usuario.id} - ${usuario.nome}</div>
-                        <div class="data-item-content">
-                            <strong>Email:</strong> ${usuario.email}<br>
-                            <strong>Altura:</strong> ${usuario.altura}m | <strong>Peso:</strong> ${usuario.pesoAtual}kg
-                            ${usuario.pesoMeta ? `<br><strong>Meta:</strong> ${usuario.pesoMeta}kg` : ''}
+                
+                tarefasHoje.forEach(tarefa => {
+                    const concluidaHoje = tarefa.conclusoesPorData && tarefa.conclusoesPorData[new Date().toISOString().split('T')[0]];
+                    const pontos = tarefa.dificuldade === 'FACIL' ? 10 : tarefa.dificuldade === 'MEDIO' ? 25 : 50;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'task-item' + (concluidaHoje ? ' completed' : '');
+                    
+                    let frequenciaTexto = '';
+                    if (tarefa.frequencia === 'DIARIA') {
+                        frequenciaTexto = '🔄 Diária';
+                    } else if (tarefa.frequencia === 'SEMANAL') {
+                        const diasMap = {
+                            'MONDAY': 'Seg', 'TUESDAY': 'Ter', 'WEDNESDAY': 'Qua',
+                            'THURSDAY': 'Qui', 'FRIDAY': 'Sex', 'SATURDAY': 'Sáb', 'SUNDAY': 'Dom'
+                        };
+                        const dias = tarefa.diasDaSemana.map(d => diasMap[d]).join(', ');
+                        frequenciaTexto = `📅 ${dias}`;
+                    }
+                    
+                    div.innerHTML = `
+                        <input type="checkbox" class="task-checkbox" 
+                               ${concluidaHoje ? 'checked' : ''} 
+                               onchange="toggleTarefaHoje(${tarefa.id}, this.checked)">
+                        <div class="task-content">
+                            <div class="task-title">${tarefa.titulo}</div>
+                            ${tarefa.descricao ? `<div style="font-size: 0.85em; color: #999; margin: 5px 0;">${tarefa.descricao}</div>` : ''}
+                            <div style="margin-top: 8px;">
+                                <span class="task-category">${tarefa.categoria || 'Geral'}</span>
+                                ${frequenciaTexto ? `<span style="font-size: 0.85em; color: #999; margin-left: 10px;">${frequenciaTexto}</span>` : ''}
+                                ${!concluidaHoje ? `<span class="task-points">+${pontos} pontos</span>` : ''}
+                            </div>
                         </div>
-                        <div class="data-item-actions">
-                            <button class="btn-delete" onclick="deletarUsuario(${usuario.id})">🗑️ Deletar</button>
-                        </div>
+                        <button onclick="removerTarefa(${tarefa.id})" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 10px;">🗑️</button>
                     `;
-                    lista.appendChild(item);
+                    tasksList.appendChild(div);
                 });
             } catch (error) {
-                console.error('Erro ao listar usuários:', error);
+                console.error('Erro ao carregar tarefas:', error);
             }
         }
 
-        async function deletarUsuario(id) {
-            if (!confirm('Tem certeza que deseja deletar?')) return;
-
-            try {
-                const response = await fetch(`${API_URL}/usuarios/${id}`, { method: 'DELETE' });
-                if (response.ok) {
-                    showMessage('usuarioMessage', '✅ Usuário deletado!', 'success');
-                    listarUsuarios();
-                } else {
-                    showMessage('usuarioMessage', '❌ Erro ao deletar', 'error');
-                }
-            } catch (error) {
-                showMessage('usuarioMessage', '❌ Erro: ' + error.message, 'error');
-            }
-        }
-
-        // TAREFAS
-        async function criarTarefa() {
-            const usuarioId = parseInt(document.getElementById('usuarioIdTarefa').value);
-            const titulo = document.getElementById('tituloTarefa').value;
-            const descricao = document.getElementById('descricaoTarefa').value;
-            const categoria = document.getElementById('categoriaTarefa').value;
-
-            if (!usuarioId || !titulo) {
-                showMessage('tarefaMessage', '❌ Preencha os campos obrigatórios', 'error');
+        // Adicionar Tarefa
+        async function adicionarTarefa() {
+            const titulo = document.getElementById('novaTarefaTitulo').value;
+            const descricao = document.getElementById('novaTarefaDescricao').value;
+            const categoria = document.getElementById('novaTarefaCategoria').value;
+            const dificuldade = document.getElementById('novaTarefaDificuldade').value;
+            const frequencia = document.getElementById('novaTarefaFrequencia').value;
+            
+            if (!titulo) {
+                alert('Por favor, insira o nome da tarefa!');
                 return;
             }
-
+            
+            const diasDaSemana = [];
+            if (frequencia === 'SEMANAL') {
+                const checkboxes = document.querySelectorAll('.dia-checkbox:checked');
+                if (checkboxes.length === 0) {
+                    alert('Por favor, selecione pelo menos um dia da semana!');
+                    return;
+                }
+                checkboxes.forEach(cb => diasDaSemana.push(cb.value));
+            }
+            
             try {
                 const response = await fetch(`${API_URL}/tarefas`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuarioId, titulo, descricao, categoria, concluida: false })
+                    body: JSON.stringify({
+                        usuarioId: usuarioAtual.id,
+                        titulo,
+                        descricao,
+                        categoria,
+                        dificuldade,
+                        frequencia,
+                        diasDaSemana,
+                        concluida: false,
+                        conclusoesPorData: {},
+                        dataHora: new Date().toISOString()
+                    })
                 });
-
-                if (response.ok) {
-                    showMessage('tarefaMessage', '✅ Tarefa criada com sucesso!', 'success');
-                    document.getElementById('usuarioIdTarefa').value = '';
-                    document.getElementById('tituloTarefa').value = '';
-                    document.getElementById('descricaoTarefa').value = '';
-                    document.getElementById('categoriaTarefa').value = '';
-                    listarTarefas();
-                }
-            } catch (error) {
-                showMessage('tarefaMessage', '❌ Erro: ' + error.message, 'error');
-            }
-        }
-
-        async function listarTarefas() {
-            try {
-                const response = await fetch(`${API_URL}/tarefas`);
-                const tarefas = await response.json();
                 
-                const lista = document.getElementById('tarefasList');
-                lista.innerHTML = '';
-
-                if (tarefas.length === 0) {
-                    lista.innerHTML = '<p style="color: #999; text-align: center;">Nenhuma tarefa registrada</p>';
-                    return;
-                }
-
-                tarefas.forEach(tarefa => {
-                    const item = document.createElement('div');
-                    item.className = 'data-item';
-                    item.innerHTML = `
-                        <div class="data-item-id">ID: ${tarefa.id} - ${tarefa.titulo}</div>
-                        <div class="data-item-content">
-                            <strong>Categoria:</strong> ${tarefa.categoria || 'N/A'}<br>
-                            <strong>Status:</strong> ${tarefa.concluida ? '✅ Concluída' : '⏳ Pendente'}
-                        </div>
-                        <div class="data-item-actions">
-                            <button class="btn-delete" onclick="deletarTarefa(${tarefa.id})">🗑️ Deletar</button>
-                        </div>
-                    `;
-                    lista.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Erro ao listar tarefas:', error);
-            }
-        }
-
-        async function deletarTarefa(id) {
-            if (!confirm('Tem certeza que deseja deletar?')) return;
-
-            try {
-                const response = await fetch(`${API_URL}/tarefas/${id}`, { method: 'DELETE' });
                 if (response.ok) {
-                    showMessage('tarefaMessage', '✅ Tarefa deletada!', 'success');
-                    listarTarefas();
+                    document.getElementById('novaTarefaTitulo').value = '';
+                    document.getElementById('novaTarefaDescricao').value = '';
+                    document.getElementById('novaTarefaFrequencia').value = 'UNICA';
+                    document.querySelectorAll('.dia-checkbox').forEach(cb => cb.checked = false);
+                    mostrarDiasSemana();
+                    await carregarTarefas();
                 }
             } catch (error) {
-                showMessage('tarefaMessage', '❌ Erro: ' + error.message, 'error');
+                console.error('Erro ao adicionar tarefa:', error);
             }
         }
 
-        // ESTATÍSTICAS
-        async function carregarEstatisticas() {
+        // Toggle Tarefa Hoje
+        async function toggleTarefaHoje(tarefaId, concluida) {
             try {
-                const [usuariosResp, tarefasResp, registrosResp] = await Promise.all([
-                    fetch(`${API_URL}/usuarios`),
-                    fetch(`${API_URL}/tarefas`),
-                    fetch(`${API_URL}/registros-diarios`)
-                ]);
+                const endpoint = concluida ? 'concluir-hoje' : 'desconcluir-hoje';
+                const response = await fetch(`${API_URL}/tarefas/${tarefaId}/${endpoint}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    // Recarregar usuário para atualizar pontos
+                    const userResponse = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}`);
+                    if (userResponse.ok) {
+                        usuarioAtual = await userResponse.json();
+                        
+                        // Atualizar displays de recompensas
+                        if (usuarioAtual.sistemaRecompensas) {
+                            document.getElementById('pontosTotal').textContent = usuarioAtual.sistemaRecompensas.pontos || 0;
+                            document.getElementById('diasConsecutivos').textContent = usuarioAtual.sistemaRecompensas.diasConsecutivos || 0;
+                            document.getElementById('conquistasTotal').textContent = usuarioAtual.sistemaRecompensas.conquistas?.length || 0;
+                        }
+                    }
+                    
+                    await carregarTarefas();
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar tarefa:', error);
+            }
+        }
 
-                const usuarios = await usuariosResp.json();
-                const tarefas = await tarefasResp.json();
-                const registros = await registrosResp.json();
+        // Remover Tarefa
+        async function removerTarefa(tarefaId) {
+            if (!confirm('Deseja realmente remover esta tarefa?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/tarefas/${tarefaId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await carregarTarefas();
+                }
+            } catch (error) {
+                console.error('Erro ao remover tarefa:', error);
+            }
+        }
 
-                document.getElementById('totalUsuarios').textContent = usuarios.length;
-                document.getElementById('totalTarefas').textContent = tarefas.length;
-                document.getElementById('totalRegistros').textContent = registros.length;
-
-                const lista = document.getElementById('registrosList');
-                lista.innerHTML = '';
-
-                if (registros.length === 0) {
-                    lista.innerHTML = '<p style="color: #999; text-align: center;">Nenhum registro diário</p>';
+        // Carregar Histórico de Peso
+        async function carregarHistoricoPeso() {
+            try {
+                const response = await fetch(`${API_URL}/registros-diarios`);
+                const todosRegistros = await response.json();
+                
+                // Filtrar registros do usuário atual
+                const registrosUsuario = todosRegistros
+                    .filter(r => r.usuarioId === usuarioAtual.id && r.peso)
+                    .sort((a, b) => new Date(b.data) - new Date(a.data));
+                
+                const weightHistory = document.getElementById('weightHistory');
+                weightHistory.innerHTML = '';
+                
+                if (registrosUsuario.length === 0) {
+                    weightHistory.innerHTML = '<p style="text-align: center; color: #999;">Nenhum registro ainda</p>';
                     return;
                 }
-
-                registros.slice(0, 5).forEach(registro => {
-                    const item = document.createElement('div');
-                    item.className = 'data-item';
-                    item.innerHTML = `
-                        <div class="data-item-id">ID: ${registro.id}</div>
-                        <div class="data-item-content">
-                            <strong>Usuário:</strong> ${registro.usuarioId}<br>
-                            <strong>Peso:</strong> ${registro.peso}kg | <strong>Calorias:</strong> ${registro.calorias}
-                        </div>
+                
+                registrosUsuario.forEach((registro, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'weight-entry';
+                    
+                    let changeHtml = '';
+                    if (index < registrosUsuario.length - 1) {
+                        const pesoAnterior = registrosUsuario[index + 1].peso;
+                        const diferenca = registro.peso - pesoAnterior;
+                        const sinal = diferenca > 0 ? '+' : '';
+                        const classe = diferenca > 0 ? 'negative' : 'positive';
+                        changeHtml = `<span class="weight-change ${classe}">${sinal}${diferenca.toFixed(1)} kg</span>`;
+                    }
+                    
+                    div.innerHTML = `
+                        <span class="weight-date">${new Date(registro.data).toLocaleDateString('pt-BR')}</span>
+                        <span class="weight-value">${registro.peso} kg</span>
+                        ${changeHtml}
                     `;
-                    lista.appendChild(item);
+                    weightHistory.appendChild(div);
                 });
             } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
+                console.error('Erro ao carregar histórico:', error);
             }
         }
 
-        // Carregar dados ao iniciar
-        window.addEventListener('load', () => {
-            listarUsuarios();
-            listarTarefas();
-            carregarEstatisticas();
+        // Registrar Peso
+        async function registrarPeso() {
+            console.log('🔵 Função registrarPeso() foi chamada!');
+            const pesoInput = document.getElementById('novoPeso');
+            console.log('🔵 Input encontrado:', pesoInput);
+            const peso = parseFloat(pesoInput.value);
+            console.log('🔵 Valor do peso:', peso);
+            
+            if (!peso || peso <= 0) {
+                alert('⚠️ Por favor, insira um peso válido!');
+                return;
+            }
+            
+            if (!usuarioAtual || !usuarioAtual.id) {
+                alert('❌ Erro: Usuário não identificado!');
+                return;
+            }
+            
+            try {
+                console.log('Registrando peso:', peso, 'para usuário:', usuarioAtual.id);
+                
+                const response = await fetch(`${API_URL}/registros-diarios`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuarioId: usuarioAtual.id,
+                        data: new Date().toISOString().split('T')[0],
+                        peso: peso
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const registro = await response.json();
+                    console.log('Registro criado:', registro);
+                    
+                    // Limpar campo
+                    document.getElementById('novoPeso').value = '';
+                    
+                    // Recarregar usuário para pegar os dados atualizados
+                    const userResponse = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}`);
+                    if (userResponse.ok) {
+                        usuarioAtual = await userResponse.json();
+                        console.log('Usuário atualizado:', usuarioAtual);
+                        
+                        // Atualizar displays de peso
+                        document.getElementById('pesoAtualDisplay').textContent = usuarioAtual.pesoAtual.toFixed(1) + ' kg';
+                        document.getElementById('imcValue').textContent = usuarioAtual.imc ? usuarioAtual.imc.toFixed(1) : '--';
+                        
+                        // Atualizar barra de progresso
+                        await atualizarBarraProgresso();
+                        
+                        // Recarregar histórico
+                        await carregarHistoricoPeso();
+                        
+                        alert('✅ Peso registrado com sucesso!');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('Erro ao registrar:', errorText);
+                    alert('❌ Erro ao registrar peso: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Erro ao registrar peso:', error);
+                alert('❌ Erro ao registrar peso: ' + error.message);
+            }
+        }
+        
+        // Função para atualizar apenas a barra de progresso
+        async function atualizarBarraProgresso() {
+            try {
+                // Buscar peso inicial do primeiro registro
+                let pesoInicial = usuarioAtual.pesoAtual;
+                const responseRegistros = await fetch(`${API_URL}/registros-diarios`);
+                if (responseRegistros.ok) {
+                    const registros = await responseRegistros.json();
+                    const registrosUsuario = registros.filter(r => r.usuarioId === usuarioAtual.id && r.peso);
+                    if (registrosUsuario.length > 0) {
+                        // Ordenar por data mais antiga primeiro
+                        registrosUsuario.sort((a, b) => new Date(a.data) - new Date(b.data));
+                        pesoInicial = registrosUsuario[0].peso;
+                    }
+                }
+                
+                // Atualizar display de peso inicial
+                document.getElementById('pesoInicialDisplay').textContent = pesoInicial.toFixed(1) + ' kg';
+                
+                // Calcular e atualizar progresso
+                if (usuarioAtual.pesoMeta && usuarioAtual.pesoAtual && pesoInicial) {
+                    const diferencaTotal = Math.abs(pesoInicial - usuarioAtual.pesoMeta);
+                    const diferencaAtual = Math.abs(pesoInicial - usuarioAtual.pesoAtual);
+                    const porcentagem = diferencaTotal > 0 ? (diferencaAtual / diferencaTotal) * 100 : 0;
+                    const progressoFinal = Math.min(100, Math.max(0, porcentagem));
+                    
+                    document.getElementById('progressoPeso').style.width = progressoFinal + '%';
+                    document.getElementById('progressoPeso').textContent = progressoFinal.toFixed(1) + '%';
+                    document.getElementById('progressoPercentual').textContent = progressoFinal.toFixed(1) + '%';
+                    
+                    console.log('Progresso atualizado:', {
+                        pesoInicial,
+                        pesoAtual: usuarioAtual.pesoAtual,
+                        pesoMeta: usuarioAtual.pesoMeta,
+                        progressoFinal
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar barra de progresso:', error);
+            }
+        }
+
+        // Fazer Logout
+        function fazerLogout() {
+            usuarioAtual = null;
+            localStorage.removeItem('usuarioId');
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('authPage').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+        }
+
+        // Funções de Mensagem
+        function showMessage(elementId, message, type) {
+            const msgElement = document.getElementById(elementId);
+            msgElement.className = `message ${type}`;
+            msgElement.textContent = message;
+            msgElement.style.display = 'block';
+        }
+
+        function hideMessage(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        // Auto-login se houver usuário salvo
+        window.addEventListener('load', async () => {
+            const usuarioId = localStorage.getItem('usuarioId');
+            if (usuarioId) {
+                try {
+                    const response = await fetch(`${API_URL}/usuarios/${usuarioId}`);
+                    if (response.ok) {
+                        usuarioAtual = await response.json();
+                        mostrarDashboard();
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar usuário:', error);
+                }
+            }
         });
     </script>
 </body>

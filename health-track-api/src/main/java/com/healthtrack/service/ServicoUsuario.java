@@ -62,6 +62,14 @@ public class ServicoUsuario {
         repositorioUsuario.removerPorId(id);
     }
     
+    public Optional<Usuario> buscarPorEmailESenha(String email, String senha) {
+        Optional<Usuario> usuario = repositorioUsuario.buscarPorEmail(email);
+        if (usuario.isPresent() && usuario.get().getSenha().equals(senha)) {
+            return usuario;
+        }
+        return Optional.empty();
+    }
+    
     private void calcularMetricasSaude(Usuario usuario) {
         usuario.setImc(calculadoraSaude.calcularIMC(usuario.getPesoAtual(), usuario.getAltura()));
         usuario.setTmb(calculadoraSaude.calcularTMB(usuario));

@@ -1,16 +1,1 @@
-[
-	{
-		"id": 1,
-		"usuarioId": 1,
-		"titulo": "Caminhada 30 min",
-		"descricao": "Caminhada leve",
-		"categoria": "Atividade",
-		"dificuldade": "FACIL",
-		"caloriasEstimadas": 150,
-		"tempoMinutos": 30,
-		"dataHora": "2025-11-30T07:00:00",
-		"concluida": false,
-		"dataConclusao": null,
-		"dataCriacao": "2025-11-30T06:00:00"
-	}
-]
+[{"id":1,"usuarioId":2,"titulo":"academia","descricao":"","categoria":"EXERCICIO","dificuldade":"DIFICIL","caloriasEstimadas":null,"tempoMinutos":null,"dataHora":[2025,12,4,20,27,43,264000000],"concluida":false,"dataConclusao":null,"dataCriacao":[2025,12,4,20,27,44,138644000],"diasDaSemana":["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"],"frequencia":"SEMANAL","conclusoesPorData":{"2025-12-04":true}}]

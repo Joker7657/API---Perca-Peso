@@ -22,6 +22,10 @@ public class SistemaRecompensas {
         this.pontos += pontos;
     }
     
+    public void removerPontos(Integer pontos) {
+        this.pontos = Math.max(0, this.pontos - pontos);
+    }
+    
     public void adicionarConquista(String conquista) {
         if (!conquistas.contains(conquista)) {
             conquistas.add(conquista);

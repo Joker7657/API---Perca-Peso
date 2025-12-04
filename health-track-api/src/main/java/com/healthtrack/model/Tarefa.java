@@ -1,6 +1,12 @@
 package com.healthtrack.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Tarefa {
     private Long id;
@@ -15,6 +21,11 @@ public class Tarefa {
     private Boolean concluida = false;
     private LocalDateTime dataConclusao;
     private LocalDateTime dataCriacao;
+    
+    // Novos campos para recorrência
+    private List<String> diasDaSemana = new ArrayList<>(); // ["SEGUNDA", "QUARTA", "SEXTA"]
+    private String frequencia = "UNICA"; // "UNICA", "DIARIA", "SEMANAL", "MENSAL"
+    private Map<String, Boolean> conclusoesPorData = new HashMap<>(); // "2025-12-04" -> true
     
     public Tarefa() {
         this.dataCriacao = LocalDateTime.now();
@@ -61,4 +72,32 @@ public class Tarefa {
     
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    
+    public List<String> getDiasDaSemana() { return diasDaSemana; }
+    public void setDiasDaSemana(List<String> diasDaSemana) { this.diasDaSemana = diasDaSemana; }
+    
+    public String getFrequencia() { return frequencia; }
+    public void setFrequencia(String frequencia) { this.frequencia = frequencia; }
+    
+    public Map<String, Boolean> getConclusoesPorData() { return conclusoesPorData; }
+    public void setConclusoesPorData(Map<String, Boolean> conclusoesPorData) { this.conclusoesPorData = conclusoesPorData; }
+    
+    // Métodos auxiliares
+    @JsonIgnore
+    public boolean isConcluidaHoje() {
+        String hoje = LocalDate.now().toString();
+        return conclusoesPorData.getOrDefault(hoje, false);
+    }
+    
+    @JsonIgnore
+    public void marcarConcluidaHoje() {
+        String hoje = LocalDate.now().toString();
+        conclusoesPorData.put(hoje, true);
+    }
+    
+    @JsonIgnore
+    public void desmarcarConcluidaHoje() {
+        String hoje = LocalDate.now().toString();
+        conclusoesPorData.remove(hoje);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +84,101 @@ public class ServicoTarefa {
         }
         
         return tarefa;
+    }
+    
+    public Tarefa concluirTarefaHoje(Long tarefaId) {
+        Tarefa tarefa = repositorioTarefa.buscarPorId(tarefaId)
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa não encontrada"));
+        
+        if (!tarefa.isConcluidaHoje()) {
+            tarefa.marcarConcluidaHoje();
+            
+            // Adicionar pontos ao usuário
+            Usuario usuario = repositorioUsuario.buscarPorId(tarefa.getUsuarioId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+            
+            int pontos;
+            switch (tarefa.getDificuldade()) {
+                case "FACIL":
+                    pontos = 10;
+                    break;
+                case "MEDIO":
+                    pontos = 25;
+                    break;
+                case "DIFICIL":
+                    pontos = 50;
+                    break;
+                default:
+                    pontos = 10;
+            }
+            
+            if (usuario.getSistemaRecompensas() != null) {
+                usuario.getSistemaRecompensas().adicionarPontos(pontos);
+                repositorioUsuario.salvar(usuario);
+            }
+            
+            repositorioTarefa.salvar(tarefa);
+        }
+        
+        return tarefa;
+    }
+    
+    public Tarefa desconcluirTarefaHoje(Long tarefaId) {
+        Tarefa tarefa = repositorioTarefa.buscarPorId(tarefaId)
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa não encontrada"));
+        
+        if (tarefa.isConcluidaHoje()) {
+            tarefa.desmarcarConcluidaHoje();
+            
+            // Remover pontos do usuário
+            Usuario usuario = repositorioUsuario.buscarPorId(tarefa.getUsuarioId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+            
+            int pontos;
+            switch (tarefa.getDificuldade()) {
+                case "FACIL":
+                    pontos = 10;
+                    break;
+                case "MEDIO":
+                    pontos = 25;
+                    break;
+                case "DIFICIL":
+                    pontos = 50;
+                    break;
+                default:
+                    pontos = 10;
+            }
+            
+            if (usuario.getSistemaRecompensas() != null) {
+                usuario.getSistemaRecompensas().removerPontos(pontos);
+                repositorioUsuario.salvar(usuario);
+            }
+            
+            repositorioTarefa.salvar(tarefa);
+        }
+        
+        return tarefa;
+    }
+    
+    public List<Tarefa> buscarTarefasDoUsuarioParaHoje(Long usuarioId) {
+        List<Tarefa> todasTarefas = repositorioTarefa.buscarPorUsuarioId(usuarioId);
+        List<Tarefa> tarefasDeHoje = new ArrayList<>();
+        
+        String diaAtual = java.time.LocalDate.now().getDayOfWeek().toString();
+        
+        for (Tarefa tarefa : todasTarefas) {
+            if (tarefa.getFrequencia().equals("DIARIA")) {
+                tarefasDeHoje.add(tarefa);
+            } else if (tarefa.getFrequencia().equals("SEMANAL") && 
+                       tarefa.getDiasDaSemana() != null && 
+                       tarefa.getDiasDaSemana().contains(diaAtual)) {
+                tarefasDeHoje.add(tarefa);
+            } else if (tarefa.getFrequencia().equals("UNICA") && !tarefa.getConcluida()) {
+                tarefasDeHoje.add(tarefa);
+            }
+        }
+        
+        return tarefasDeHoje;
     }
     
     public void removerTarefa(Long id) {

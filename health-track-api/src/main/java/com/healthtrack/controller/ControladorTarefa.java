@@ -63,6 +63,31 @@ public class ControladorTarefa {
         }
     }
     
+    @PutMapping("/{id}/concluir-hoje")
+    public ResponseEntity<Tarefa> concluirTarefaHoje(@PathVariable Long id) {
+        try {
+            Tarefa tarefa = servicoTarefa.concluirTarefaHoje(id);
+            return ResponseEntity.ok(tarefa);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @PutMapping("/{id}/desconcluir-hoje")
+    public ResponseEntity<Tarefa> desconcluirTarefaHoje(@PathVariable Long id) {
+        try {
+            Tarefa tarefa = servicoTarefa.desconcluirTarefaHoje(id);
+            return ResponseEntity.ok(tarefa);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @GetMapping("/usuario/{usuarioId}/hoje")
+    public List<Tarefa> listarTarefasDoUsuarioHoje(@PathVariable Long usuarioId) {
+        return servicoTarefa.buscarTarefasDoUsuarioParaHoje(usuarioId);
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removerTarefa(@PathVariable Long id) {
         try {

@@ -36,10 +36,24 @@ public class ServicoRegistroDiario {
             throw new IllegalArgumentException("Já existe um registro para esta data");
         }
         
+        // Atualizar peso do usuário
         if (registro.getPeso() != null) {
             Usuario usuario = repositorioUsuario.buscarPorId(registro.getUsuarioId())
                     .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
             calculadoraSaude.validarPerdaPeso(usuario.getPesoAtual(), registro.getPeso());
+            
+            // Atualizar peso atual do usuário
+            usuario.setPesoAtual(registro.getPeso());
+            // Recalcular IMC
+            usuario.setImc(calculadoraSaude.calcularIMC(registro.getPeso(), usuario.getAltura()));
+            repositorioUsuario.salvar(usuario);
+            
+            // Adicionar pontos por registro
+            if (usuario.getSistemaRecompensas() == null) {
+                usuario.setSistemaRecompensas(new com.healthtrack.model.SistemaRecompensas());
+            }
+            usuario.getSistemaRecompensas().adicionarPontos(5);
+            repositorioUsuario.salvar(usuario);
         }
         
         return repositorioRegistroDiario.salvar(registro);

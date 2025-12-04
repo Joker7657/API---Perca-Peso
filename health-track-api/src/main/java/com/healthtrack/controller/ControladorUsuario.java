@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -55,6 +57,26 @@ public class ControladorUsuario {
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credenciais) {
+        String email = credenciais.get("email");
+        String senha = credenciais.get("senha");
+        
+        Optional<Usuario> usuario = servicoUsuario.buscarPorEmailESenha(email, senha);
+        
+        if (usuario.isPresent()) {
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("sucesso", true);
+            resposta.put("usuario", usuario.get());
+            return ResponseEntity.ok(resposta);
+        } else {
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("sucesso", false);
+            resposta.put("mensagem", "Email ou senha incorretos");
+            return ResponseEntity.status(401).body(resposta);
         }
     }
 }
