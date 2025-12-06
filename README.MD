@@ -1,4 +1,48 @@
-Resumo
+# 🏃‍♀️ Perca Peso API
+
+API para gerenciamento de metas de emagrecimento e acompanhamento de tarefas relacionadas à saúde.
+
+## 🚀 Como Executar a Aplicação
+
+### Pré-requisitos
+- Java 11 ou superior
+- Maven 3.6 ou superior
+
+### Passos para Executar
+
+1. **Clone o repositório** (se ainda não tiver feito):
+```bash
+git clone https://github.com/Joker7657/API---Perca-Peso.git
+cd API---Perca-Peso
+```
+
+2. **Navegue até o diretório do projeto**:
+```bash
+cd health-track-api
+```
+
+3. **Execute a aplicação**:
+```bash
+mvn spring-boot:run
+```
+
+4. **Acesse a aplicação**:
+   - A API estará disponível em: `http://localhost:8080`
+   - Página inicial: `http://localhost:8080/index.html`
+   - Documentação da API: `http://localhost:8080/swagger-ui.html` (se configurado)
+
+### Para Encerrar a Aplicação
+Pressione `Ctrl + C` no terminal onde a aplicação está rodando, ou execute:
+```bash
+pkill -f "spring-boot:run"
+```
+
+---
+
+
+
+
+📋 Resumo
 Este projeto tem como objetivo desenvolver uma API voltada para o gerenciamento de metas de emagrecimento e acompanhamento de tarefas relacionadas à saúde. A solução permitirá que o usuário registre atividades, monitore peso e medidas, acompanhe hábitos diários e organize sua rotina de forma mais eficiente. Ao centralizar informações importantes do processo de emagrecimento, a API busca oferecer uma ferramenta prática, estruturada e útil, sistema completo para acompanhamento de progresso.
 Problema 
 Pessoas que buscam emagrecimento precisam acompanhar exercícios, alimentação, humor, peso, medidas e hábitos diários. Porém, muitas vezes utilizam várias ferramentas separadas (anotações, planilhas, apps isolados), o que dificulta:
