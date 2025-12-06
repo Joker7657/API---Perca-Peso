@@ -1366,29 +1366,29 @@
         // Carregar Histórico de Peso
         async function carregarHistoricoPeso() {
             try {
-                const response = await fetch(`${API_URL}/registros-diarios`);
-                const todosRegistros = await response.json();
+                const response = await fetch(`${API_URL}/registros-diarios/usuario/${usuarioAtual.id}`);
+                const registrosUsuario = await response.json();
                 
-                // Filtrar registros do usuário atual
-                const registrosUsuario = todosRegistros
-                    .filter(r => r.usuarioId === usuarioAtual.id && r.peso)
+                // Filtrar apenas registros com peso e ordenar
+                const registrosComPeso = registrosUsuario
+                    .filter(r => r.peso)
                     .sort((a, b) => new Date(b.data) - new Date(a.data));
                 
                 const weightHistory = document.getElementById('weightHistory');
                 weightHistory.innerHTML = '';
                 
-                if (registrosUsuario.length === 0) {
+                if (registrosComPeso.length === 0) {
                     weightHistory.innerHTML = '<p style="text-align: center; color: #999;">Nenhum registro ainda</p>';
                     return;
                 }
                 
-                registrosUsuario.forEach((registro, index) => {
+                registrosComPeso.forEach((registro, index) => {
                     const div = document.createElement('div');
                     div.className = 'weight-entry';
                     
                     let changeHtml = '';
-                    if (index < registrosUsuario.length - 1) {
-                        const pesoAnterior = registrosUsuario[index + 1].peso;
+                    if (index < registrosComPeso.length - 1) {
+                        const pesoAnterior = registrosComPeso[index + 1].peso;
                         const diferenca = registro.peso - pesoAnterior;
                         const sinal = diferenca > 0 ? '+' : '';
                         const classe = diferenca > 0 ? 'negative' : 'positive';
