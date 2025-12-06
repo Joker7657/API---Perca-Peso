@@ -18,6 +18,7 @@ public class Usuario {
     private Double pesoMeta;
     private Double imc;
     private Double tmb;
+    private Double percentualGordura;
     private LocalDateTime dataCriacao;
     
     private List<Tarefa> tarefas = new ArrayList<>();
@@ -64,6 +65,9 @@ public class Usuario {
     
     public Double getTmb() { return tmb; }
     public void setTmb(Double tmb) { this.tmb = tmb; }
+    
+    public Double getPercentualGordura() { return percentualGordura; }
+    public void setPercentualGordura(Double percentualGordura) { this.percentualGordura = percentualGordura; }
     
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }

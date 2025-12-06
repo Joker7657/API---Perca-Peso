@@ -57,4 +57,23 @@ public class CalculadoraSaude {
             );
         }
     }
+    
+    // Fórmula de Jackson-Pollock simplificada para estimar gordura corporal
+    public Double calcularPercentualGordura(Usuario usuario) {
+        if (usuario.getPesoAtual() == null || usuario.getAltura() == null || 
+            usuario.getDataNascimento() == null || usuario.getGenero() == null ||
+            usuario.getImc() == null) {
+            return null;
+        }
+        
+        int idade = Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears();
+        Double imc = usuario.getImc();
+        
+        // Fórmula de Deurenberg
+        if (usuario.getGenero().equals("MASCULINO")) {
+            return (1.20 * imc) + (0.23 * idade) - 16.2;
+        } else {
+            return (1.20 * imc) + (0.23 * idade) - 5.4;
+        }
+    }
 }

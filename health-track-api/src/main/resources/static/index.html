@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Track - Sistema de Acompanhamento de Saúde</title>
+    <title>Perca Peso - Sistema de Acompanhamento de Saúde</title>
     <style>
         * {
             margin: 0;
@@ -566,7 +566,65 @@
         .weight-change.negative {
             background: #4d1a1a;
             color: #ff6b6b;
-        }   color: #721c24;
+        }
+
+        /* Visualização Corporal */
+        .body-visualization {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .body-stats {
+            margin-bottom: 25px;
+        }
+
+        .body-stat-item {
+            margin-bottom: 15px;
+        }
+
+        .body-stat-label {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .body-stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .body-stat-category {
+            font-size: 1.1em;
+            color: #ffffff;
+            padding: 8px 20px;
+            background: rgba(220, 20, 60, 0.2);
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .body-canvas-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            display: inline-block;
+            border: 2px solid #333;
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.1);
+        }
+
+        #bodyCanvas {
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .body-info {
+            margin-top: 15px;
         }
 
         /* Formulário de Registro */
@@ -663,7 +721,7 @@
     <div id="authPage">
         <div class="auth-container">
             <div class="auth-header">
-                <h1>🏃‍♂️ Health Track</h1>
+                <h1>🏃‍♂️ Perca Peso</h1>
                 <p>Seu companheiro de saúde e bem-estar</p>
             </div>
 
@@ -849,6 +907,33 @@
 
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressoPeso" style="width: 0%">0%</div>
+                    </div>
+                </div>
+
+                <!-- Visualização Corporal -->
+                <div class="card">
+                    <h3>👤 Composição Corporal</h3>
+                    
+                    <div class="body-visualization">
+                        <div class="body-stats">
+                            <div class="body-stat-item">
+                                <div class="body-stat-label">Gordura Corporal</div>
+                                <div class="body-stat-value" id="percentualGorduraDisplay">--</div>
+                            </div>
+                            <div class="body-stat-category" id="categoriaGordura">
+                                Calculando...
+                            </div>
+                        </div>
+                        
+                        <div class="body-canvas-container">
+                            <canvas id="bodyCanvas" width="220" height="420"></canvas>
+                        </div>
+                        
+                        <div class="body-info">
+                            <p style="font-size: 0.85em; color: #666; text-align: center; margin-top: 15px;">
+                                Representação visual baseada no percentual de gordura corporal estimado pela fórmula de Deurenberg.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -1096,6 +1181,9 @@
                 // Atualizar conquistas
                 atualizarConquistas(recompensas.conquistas || []);
             }
+            
+            // Atualizar visualização corporal
+            atualizarVisualizacaoCorporal();
             
             // Carregar tarefas
             await carregarTarefas();
@@ -1463,6 +1551,9 @@
                         // Atualizar recompensas (XP, pontos, nível)
                         atualizarRecompensasInterface();
                         
+                        // Atualizar visualização corporal
+                        atualizarVisualizacaoCorporal();
+                        
                         // Recarregar histórico
                         await carregarHistoricoPeso();
                         
@@ -1572,6 +1663,346 @@
 
         function hideMessage(elementId) {
             document.getElementById(elementId).style.display = 'none';
+        }
+
+        // Desenhar visualização corporal realista
+        function desenharCorpoHumano(percentualGordura, genero) {
+            const canvas = document.getElementById('bodyCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const isMasculino = genero === 'MASCULINO';
+            
+            // Calcular proporções baseadas no percentual de gordura de forma mais realista
+            let props = calcularProporcoesRealistas(percentualGordura, isMasculino);
+            
+            // Configuração de desenho
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Cor base do corpo
+            const corPele = '#e8d4c0';
+            const corContorno = '#b89968';
+            
+            // Cabeça com formato mais realista
+            ctx.fillStyle = corPele;
+            ctx.strokeStyle = corContorno;
+            ctx.beginPath();
+            ctx.ellipse(centerX, 35, props.cabecaLargura, props.cabecaAltura, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Pescoço
+            ctx.beginPath();
+            ctx.moveTo(centerX - props.pescocoLargura / 2, 55);
+            ctx.lineTo(centerX - props.pescocoLargura / 2, 70);
+            ctx.lineTo(centerX + props.pescocoLargura / 2, 70);
+            ctx.lineTo(centerX + props.pescocoLargura / 2, 55);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Ombros e parte superior do torso (com curvas)
+            ctx.beginPath();
+            ctx.moveTo(centerX - props.ombrosLargura / 2, 70);
+            ctx.quadraticCurveTo(centerX - props.ombrosLargura / 2, 80, centerX - props.peitoLargura / 2, 95);
+            ctx.lineTo(centerX - props.peitoLargura / 2, 95);
+            ctx.lineTo(centerX + props.peitoLargura / 2, 95);
+            ctx.quadraticCurveTo(centerX + props.ombrosLargura / 2, 80, centerX + props.ombrosLargura / 2, 70);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Torso médio (peito/seios até cintura) - com curvas realistas
+            ctx.beginPath();
+            ctx.moveTo(centerX - props.peitoLargura / 2, 95);
+            ctx.bezierCurveTo(
+                centerX - props.peitoLargura / 2 - props.gorduraAbdominal, 120,
+                centerX - props.cintura / 2 - props.gorduraAbdominal, 150,
+                centerX - props.cintura / 2, 175
+            );
+            ctx.lineTo(centerX + props.cintura / 2, 175);
+            ctx.bezierCurveTo(
+                centerX + props.cintura / 2 + props.gorduraAbdominal, 150,
+                centerX + props.peitoLargura / 2 + props.gorduraAbdominal, 120,
+                centerX + props.peitoLargura / 2, 95
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Quadril (com formato mais realista)
+            ctx.beginPath();
+            ctx.moveTo(centerX - props.cintura / 2, 175);
+            ctx.bezierCurveTo(
+                centerX - props.quadrilLargura / 2, 180,
+                centerX - props.quadrilLargura / 2, 210,
+                centerX - props.quadrilBase / 2, 230
+            );
+            ctx.lineTo(centerX + props.quadrilBase / 2, 230);
+            ctx.bezierCurveTo(
+                centerX + props.quadrilLargura / 2, 210,
+                centerX + props.quadrilLargura / 2, 180,
+                centerX + props.cintura / 2, 175
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Braço esquerdo (parte superior)
+            ctx.beginPath();
+            const bracoEsqX = centerX - props.ombrosLargura / 2;
+            ctx.moveTo(bracoEsqX, 75);
+            ctx.lineTo(bracoEsqX - props.bracoLargura, 75);
+            ctx.bezierCurveTo(
+                bracoEsqX - props.bracoLargura - 2, 100,
+                bracoEsqX - props.antebracoLargura - 2, 130,
+                bracoEsqX - props.antebracoLargura, 160
+            );
+            ctx.lineTo(bracoEsqX - props.antebracoLargura + 5, 160);
+            ctx.bezierCurveTo(
+                bracoEsqX + 3, 130,
+                bracoEsqX + 3, 100,
+                bracoEsqX, 75
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Braço direito (parte superior)
+            ctx.beginPath();
+            const bracoDirX = centerX + props.ombrosLargura / 2;
+            ctx.moveTo(bracoDirX, 75);
+            ctx.lineTo(bracoDirX + props.bracoLargura, 75);
+            ctx.bezierCurveTo(
+                bracoDirX + props.bracoLargura + 2, 100,
+                bracoDirX + props.antebracoLargura + 2, 130,
+                bracoDirX + props.antebracoLargura, 160
+            );
+            ctx.lineTo(bracoDirX + props.antebracoLargura - 5, 160);
+            ctx.bezierCurveTo(
+                bracoDirX - 3, 130,
+                bracoDirX - 3, 100,
+                bracoDirX, 75
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Perna esquerda (com formato anatômico)
+            ctx.beginPath();
+            const pernaEsqX = centerX - props.quadrilBase / 2 + 8;
+            ctx.moveTo(pernaEsqX, 230);
+            ctx.bezierCurveTo(
+                pernaEsqX - 3, 260,
+                pernaEsqX - props.coxaLargura / 2, 290,
+                pernaEsqX - props.panturrilhaLargura / 2, 330
+            );
+            ctx.lineTo(pernaEsqX - props.tornozeloLargura / 2, 380);
+            ctx.lineTo(pernaEsqX + props.tornozeloLargura / 2, 380);
+            ctx.lineTo(pernaEsqX + props.panturrilhaLargura / 2, 330);
+            ctx.bezierCurveTo(
+                pernaEsqX + props.coxaLargura / 2, 290,
+                pernaEsqX + 3, 260,
+                pernaEsqX, 230
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Perna direita (com formato anatômico)
+            ctx.beginPath();
+            const pernaDirX = centerX + props.quadrilBase / 2 - 8;
+            ctx.moveTo(pernaDirX, 230);
+            ctx.bezierCurveTo(
+                pernaDirX + 3, 260,
+                pernaDirX + props.coxaLargura / 2, 290,
+                pernaDirX + props.panturrilhaLargura / 2, 330
+            );
+            ctx.lineTo(pernaDirX + props.tornozeloLargura / 2, 380);
+            ctx.lineTo(pernaDirX - props.tornozeloLargura / 2, 380);
+            ctx.lineTo(pernaDirX - props.panturrilhaLargura / 2, 330);
+            ctx.bezierCurveTo(
+                pernaDirX - props.coxaLargura / 2, 290,
+                pernaDirX - 3, 260,
+                pernaDirX, 230
+            );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Adicionar definição muscular para baixos percentuais
+            if (percentualGordura < 15) {
+                ctx.strokeStyle = 'rgba(139, 90, 43, 0.3)';
+                ctx.lineWidth = 1;
+                
+                // Linhas de definição abdominal
+                if (percentualGordura < 12) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, 110);
+                    ctx.lineTo(centerX, 170);
+                    ctx.stroke();
+                    
+                    // Linhas horizontais dos abs
+                    for (let i = 0; i < 3; i++) {
+                        const y = 120 + (i * 20);
+                        ctx.beginPath();
+                        ctx.moveTo(centerX - 15, y);
+                        ctx.lineTo(centerX + 15, y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        // Calcular proporções realistas baseadas no percentual de gordura
+        function calcularProporcoesRealistas(percentualGordura, isMasculino) {
+            let props = {};
+            
+            if (isMasculino) {
+                // Homem: quanto maior a gordura, menos definição e mais volume
+                if (percentualGordura < 8) {
+                    // Atleta profissional - muito definido
+                    props = {
+                        cabecaLargura: 18, cabecaAltura: 22,
+                        pescocoLargura: 12,
+                        ombrosLargura: 65, peitoLargura: 55,
+                        cintura: 42, gorduraAbdominal: 0,
+                        quadrilLargura: 50, quadrilBase: 45,
+                        bracoLargura: 15, antebracoLargura: 12,
+                        coxaLargura: 22, panturrilhaLargura: 16, tornozeloLargura: 10
+                    };
+                } else if (percentualGordura < 12) {
+                    // Fitness - definido
+                    props = {
+                        cabecaLargura: 18, cabecaAltura: 22,
+                        pescocoLargura: 13,
+                        ombrosLargura: 68, peitoLargura: 58,
+                        cintura: 48, gorduraAbdominal: 2,
+                        quadrilLargura: 52, quadrilBase: 48,
+                        bracoLargura: 16, antebracoLargura: 13,
+                        coxaLargura: 24, panturrilhaLargura: 17, tornozeloLargura: 10
+                    };
+                } else if (percentualGordura < 18) {
+                    // Média - leve gordura visível
+                    props = {
+                        cabecaLargura: 19, cabecaAltura: 23,
+                        pescocoLargura: 14,
+                        ombrosLargura: 70, peitoLargura: 62,
+                        cintura: 58, gorduraAbdominal: 6,
+                        quadrilLargura: 58, quadrilBase: 52,
+                        bracoLargura: 18, antebracoLargura: 14,
+                        coxaLargura: 27, panturrilhaLargura: 19, tornozeloLargura: 11
+                    };
+                } else if (percentualGordura < 25) {
+                    // Acima da média - barriga visível
+                    props = {
+                        cabecaLargura: 20, cabecaAltura: 24,
+                        pescocoLargura: 16,
+                        ombrosLargura: 72, peitoLargura: 68,
+                        cintura: 68, gorduraAbdominal: 12,
+                        quadrilLargura: 66, quadrilBase: 58,
+                        bracoLargura: 21, antebracoLargura: 16,
+                        coxaLargura: 32, panturrilhaLargura: 22, tornozeloLargura: 12
+                    };
+                } else {
+                    // Obesidade - muito volume
+                    props = {
+                        cabecaLargura: 21, cabecaAltura: 25,
+                        pescocoLargura: 18,
+                        ombrosLargura: 75, peitoLargura: 75,
+                        cintura: 78, gorduraAbdominal: 20,
+                        quadrilLargura: 75, quadrilBase: 68,
+                        bracoLargura: 26, antebracoLargura: 20,
+                        coxaLargura: 38, panturrilhaLargura: 26, tornozeloLargura: 14
+                    };
+                }
+            } else {
+                // Mulher: formato mais curvilíneo, quadril mais largo
+                if (percentualGordura < 18) {
+                    // Atleta - muito definida
+                    props = {
+                        cabecaLargura: 17, cabecaAltura: 21,
+                        pescocoLargura: 10,
+                        ombrosLargura: 58, peitoLargura: 52,
+                        cintura: 38, gorduraAbdominal: 0,
+                        quadrilLargura: 62, quadrilBase: 55,
+                        bracoLargura: 12, antebracoLargura: 10,
+                        coxaLargura: 24, panturrilhaLargura: 16, tornozeloLargura: 9
+                    };
+                } else if (percentualGordura < 24) {
+                    // Fitness - curvas definidas
+                    props = {
+                        cabecaLargura: 17, cabecaAltura: 21,
+                        pescocoLargura: 11,
+                        ombrosLargura: 60, peitoLargura: 55,
+                        cintura: 44, gorduraAbdominal: 3,
+                        quadrilLargura: 68, quadrilBase: 60,
+                        bracoLargura: 14, antebracoLargura: 11,
+                        coxaLargura: 27, panturrilhaLargura: 18, tornozeloLargura: 9
+                    };
+                } else if (percentualGordura < 31) {
+                    // Média - curvas naturais
+                    props = {
+                        cabecaLargura: 18, cabecaAltura: 22,
+                        pescocoLargura: 12,
+                        ombrosLargura: 62, peitoLargura: 60,
+                        cintura: 52, gorduraAbdominal: 8,
+                        quadrilLargura: 75, quadrilBase: 65,
+                        bracoLargura: 17, antebracoLargura: 13,
+                        coxaLargura: 32, panturrilhaLargura: 21, tornozeloLargura: 10
+                    };
+                } else {
+                    // Acima da média - mais volume
+                    props = {
+                        cabecaLargura: 19, cabecaAltura: 23,
+                        pescocoLargura: 14,
+                        ombrosLargura: 65, peitoLargura: 68,
+                        cintura: 62, gorduraAbdominal: 15,
+                        quadrilLargura: 82, quadrilBase: 72,
+                        bracoLargura: 22, antebracoLargura: 17,
+                        coxaLargura: 38, panturrilhaLargura: 25, tornozeloLargura: 11
+                    };
+                }
+            }
+            
+            return props;
+        }
+        
+        // Obter categoria de gordura corporal
+        function obterCategoriaGordura(percentualGordura, genero) {
+            if (genero === 'MASCULINO') {
+                if (percentualGordura < 6) return 'Essencial (Atleta)';
+                if (percentualGordura < 14) return 'Atlético';
+                if (percentualGordura < 18) return 'Fitness';
+                if (percentualGordura < 25) return 'Média';
+                return 'Acima da Média';
+            } else {
+                if (percentualGordura < 14) return 'Essencial (Atleta)';
+                if (percentualGordura < 21) return 'Atlético';
+                if (percentualGordura < 25) return 'Fitness';
+                if (percentualGordura < 32) return 'Média';
+                return 'Acima da Média';
+            }
+        }
+        
+        // Atualizar visualização corporal
+        function atualizarVisualizacaoCorporal() {
+            if (!usuarioAtual || !usuarioAtual.percentualGordura) {
+                document.getElementById('percentualGorduraDisplay').textContent = '--';
+                document.getElementById('categoriaGordura').textContent = 'Dados insuficientes';
+                return;
+            }
+            
+            const percentual = usuarioAtual.percentualGordura;
+            document.getElementById('percentualGorduraDisplay').textContent = percentual.toFixed(1) + '%';
+            document.getElementById('categoriaGordura').textContent = obterCategoriaGordura(percentual, usuarioAtual.genero);
+            
+            desenharCorpoHumano(percentual, usuarioAtual.genero);
         }
 
         // Auto-login se houver usuário salvo

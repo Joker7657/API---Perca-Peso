@@ -84,5 +84,6 @@ public class ServicoUsuario {
     private void calcularMetricasSaude(Usuario usuario) {
         usuario.setImc(calculadoraSaude.calcularIMC(usuario.getPesoAtual(), usuario.getAltura()));
         usuario.setTmb(calculadoraSaude.calcularTMB(usuario));
+        usuario.setPercentualGordura(calculadoraSaude.calcularPercentualGordura(usuario));
     }
 }

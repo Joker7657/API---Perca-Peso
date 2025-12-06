@@ -51,8 +51,9 @@ public class ServicoRegistroDiario {
             
             // Atualizar peso atual do usuário
             usuario.setPesoAtual(registro.getPeso());
-            // Recalcular IMC
+            // Recalcular métricas de saúde (IMC e percentual de gordura)
             usuario.setImc(calculadoraSaude.calcularIMC(registro.getPeso(), usuario.getAltura()));
+            usuario.setPercentualGordura(calculadoraSaude.calcularPercentualGordura(usuario));
             
             // Sistema de Recompensas
             if (usuario.getSistemaRecompensas() == null) {
