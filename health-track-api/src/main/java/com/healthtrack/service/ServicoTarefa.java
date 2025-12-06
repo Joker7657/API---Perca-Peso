@@ -77,7 +77,21 @@ public class ServicoTarefa {
                     pontos = 10;
             }
             
+            if (usuario.getSistemaRecompensas() == null) {
+                usuario.setSistemaRecompensas(new com.healthtrack.model.SistemaRecompensas());
+                usuario.getSistemaRecompensas().inicializarConquistas();
+            }
+            
             usuario.getSistemaRecompensas().adicionarPontos(pontos);
+            usuario.getSistemaRecompensas().setTarefasCompletas(
+                usuario.getSistemaRecompensas().getTarefasCompletas() + 1
+            );
+            
+            // Atualizar conquista de tarefas
+            usuario.getSistemaRecompensas().atualizarProgressoConquista(
+                "forte", 
+                usuario.getSistemaRecompensas().getTarefasCompletas()
+            );
             
             repositorioTarefa.salvar(tarefa);
             repositorioUsuario.salvar(usuario);
@@ -112,11 +126,23 @@ public class ServicoTarefa {
                     pontos = 10;
             }
             
-            if (usuario.getSistemaRecompensas() != null) {
-                usuario.getSistemaRecompensas().adicionarPontos(pontos);
-                repositorioUsuario.salvar(usuario);
+            if (usuario.getSistemaRecompensas() == null) {
+                usuario.setSistemaRecompensas(new com.healthtrack.model.SistemaRecompensas());
+                usuario.getSistemaRecompensas().inicializarConquistas();
             }
             
+            usuario.getSistemaRecompensas().adicionarPontos(pontos);
+            usuario.getSistemaRecompensas().setTarefasCompletas(
+                usuario.getSistemaRecompensas().getTarefasCompletas() + 1
+            );
+            
+            // Atualizar conquista de tarefas
+            usuario.getSistemaRecompensas().atualizarProgressoConquista(
+                "forte", 
+                usuario.getSistemaRecompensas().getTarefasCompletas()
+            );
+            
+            repositorioUsuario.salvar(usuario);
             repositorioTarefa.salvar(tarefa);
         }
         

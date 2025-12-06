@@ -4,6 +4,7 @@ com/healthtrack/AplicacaoHealthTrack.class
 com/healthtrack/model/RegistroDiario.class
 com/healthtrack/model/Tarefa.class
 com/healthtrack/controller/ControladorTarefa.class
+com/healthtrack/model/SistemaRecompensas$Conquista.class
 com/healthtrack/model/SistemaRecompensas.class
 com/healthtrack/repository/RepositorioUsuario.class
 com/healthtrack/repository/RepositorioRegistroDiario.class

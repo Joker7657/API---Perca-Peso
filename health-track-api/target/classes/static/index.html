@@ -283,9 +283,51 @@
             margin-bottom: 20px;
         }
 
+        .nivel-display {
+            text-align: center;
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .nivel-numero {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .nivel-titulo {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.95;
+        }
+
+        .xp-bar-container {
+            background: rgba(0,0,0,0.3);
+            height: 25px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .xp-bar-fill {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #333;
+        }
+
         .rewards-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -311,28 +353,119 @@
 
         .conquistas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
         }
 
         .conquista {
             background: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 15px 10px;
+            border-radius: 15px;
             text-align: center;
-            font-size: 2em;
-            transition: transform 0.3s;
+            transition: all 0.3s;
             cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .conquista-icone {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .conquista-nome {
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .conquista-progresso {
+            font-size: 0.75em;
+            opacity: 0.9;
+        }
+
+        .conquista-bar {
+            background: rgba(0,0,0,0.3);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .conquista-bar-fill {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            height: 100%;
+            transition: width 0.5s ease;
         }
 
         .conquista:hover {
-            transform: scale(1.1);
+            transform: translateY(-5px);
             background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
         }
 
         .conquista.locked {
-            opacity: 0.3;
+            opacity: 0.4;
             filter: grayscale(100%);
+        }
+
+        .conquista.desbloqueada {
+            border-color: #ffd700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0);
+            }
+        }
+
+        /* Notificação de Conquista */
+        .conquista-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+            z-index: 10000;
+            animation: slideIn 0.5s ease, confetti 0.5s ease;
+            max-width: 350px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .conquista-notification-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .conquista-notification-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .conquista-notification-desc {
+            text-align: center;
+            font-size: 0.95em;
         }
 
         /* Tarefas Checklist */
@@ -614,28 +747,53 @@
             <div class="card">
                 <h3>🏆 Sistema de Recompensas</h3>
                 <div class="rewards-container">
+                    <!-- Nível e XP -->
+                    <div class="nivel-display">
+                        <div class="nivel-numero">Nível <span id="nivelAtual">1</span></div>
+                        <div class="nivel-titulo" id="nivelTitulo">Iniciante 🌱</div>
+                        <div style="font-size: 0.95em; opacity: 0.9;">
+                            <span id="xpAtual">0</span> XP
+                        </div>
+                        <div class="xp-bar-container">
+                            <div class="xp-bar-fill" id="xpBar" style="width: 0%">
+                                0%
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85em; opacity: 0.8; margin-top: 8px;">
+                            Próximo nível: <span id="xpProximoNivel">100</span> XP
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas -->
                     <div class="rewards-stats">
                         <div class="reward-stat">
                             <div class="reward-stat-value" id="pontosTotal">0</div>
-                            <div class="reward-stat-label">Pontos</div>
+                            <div class="reward-stat-label">💰 Pontos</div>
                         </div>
                         <div class="reward-stat">
                             <div class="reward-stat-value" id="diasConsecutivos">0</div>
-                            <div class="reward-stat-label">Dias Seguidos</div>
+                            <div class="reward-stat-label">🔥 Streak</div>
                         </div>
                         <div class="reward-stat">
-                            <div class="reward-stat-value" id="conquistasTotal">0</div>
-                            <div class="reward-stat-label">Conquistas</div>
+                            <div class="reward-stat-value" id="recordeStreak">0</div>
+                            <div class="reward-stat-label">🏅 Recorde</div>
+                        </div>
+                        <div class="reward-stat">
+                            <div class="reward-stat-value" id="conquistasTotal">0/10</div>
+                            <div class="reward-stat-label">🎯 Conquistas</div>
                         </div>
                     </div>
-                    <h4 style="margin-bottom: 15px; opacity: 0.9;">Conquistas Desbloqueadas</h4>
+
+                    <!-- Multiplicador -->
+                    <div style="text-align: center; background: rgba(255,255,255,0.15); padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 1.1em;">
+                        <span style="opacity: 0.9;">Multiplicador: </span>
+                        <span id="multiplicadorAtual" style="font-weight: bold; font-size: 1.3em;">1.0x</span>
+                        <span style="opacity: 0.8; font-size: 0.9em; margin-left: 10px;">⚡</span>
+                    </div>
+
+                    <h4 style="margin-bottom: 15px; opacity: 0.9; font-size: 1.2em;">🎖️ Conquistas</h4>
                     <div class="conquistas-grid" id="conquistasGrid">
-                        <div class="conquista locked" title="Bloqueado">🏅</div>
-                        <div class="conquista locked" title="Bloqueado">⭐</div>
-                        <div class="conquista locked" title="Bloqueado">🔥</div>
-                        <div class="conquista locked" title="Bloqueado">💪</div>
-                        <div class="conquista locked" title="Bloqueado">🎯</div>
-                        <div class="conquista locked" title="Bloqueado">👑</div>
+                        <!-- Conquistas serão carregadas aqui -->
                     </div>
                 </div>
             </div>
@@ -888,21 +1046,8 @@
             document.getElementById('imcValue').textContent = usuarioAtual.imc ? usuarioAtual.imc.toFixed(1) : '--';
             document.getElementById('tmbValue').textContent = usuarioAtual.tmb ? usuarioAtual.tmb.toFixed(0) + ' kcal' : '--';
             
-            // Buscar peso inicial do primeiro registro
-            let pesoInicial = usuarioAtual.pesoAtual;
-            try {
-                const responseRegistros = await fetch(`${API_URL}/registros-diarios/usuario/${usuarioAtual.id}`);
-                if (responseRegistros.ok) {
-                    const registros = await responseRegistros.json();
-                    if (registros.length > 0) {
-                        // Ordenar por data mais antiga primeiro
-                        registros.sort((a, b) => new Date(a.data) - new Date(b.data));
-                        pesoInicial = registros[0].peso;
-                    }
-                }
-            } catch (error) {
-                console.log('Erro ao buscar registros:', error);
-            }
+            // Usar peso inicial do usuário (campo fixo)
+            const pesoInicial = usuarioAtual.pesoInicial || usuarioAtual.pesoAtual;
             
             document.getElementById('pesoInicialDisplay').textContent = pesoInicial.toFixed(1) + ' kg';
             document.getElementById('pesoAtualDisplay').textContent = usuarioAtual.pesoAtual.toFixed(1) + ' kg';
@@ -922,24 +1067,119 @@
             
             // Atualizar recompensas
             if (usuarioAtual.sistemaRecompensas) {
-                document.getElementById('pontosTotal').textContent = usuarioAtual.sistemaRecompensas.pontos || 0;
-                document.getElementById('diasConsecutivos').textContent = usuarioAtual.sistemaRecompensas.diasConsecutivos || 0;
-                document.getElementById('conquistasTotal').textContent = usuarioAtual.sistemaRecompensas.conquistas?.length || 0;
+                const recompensas = usuarioAtual.sistemaRecompensas;
+                
+                // Nível e XP
+                document.getElementById('nivelAtual').textContent = recompensas.nivel || 1;
+                document.getElementById('nivelTitulo').textContent = obterTituloNivel(recompensas.nivel || 1);
+                document.getElementById('xpAtual').textContent = recompensas.experiencia || 0;
+                
+                const xpProximoNivel = Math.pow((recompensas.nivel || 1), 2) * 100;
+                const xpNivelAtual = Math.pow((recompensas.nivel || 1) - 1, 2) * 100;
+                const xpProgresso = (recompensas.experiencia || 0) - xpNivelAtual;
+                const xpNecessario = xpProximoNivel - xpNivelAtual;
+                const porcentagemXP = Math.min(100, (xpProgresso / xpNecessario) * 100);
+                
+                document.getElementById('xpBar').style.width = porcentagemXP + '%';
+                document.getElementById('xpBar').textContent = Math.round(porcentagemXP) + '%';
+                document.getElementById('xpProximoNivel').textContent = xpProximoNivel;
+                
+                // Estatísticas
+                document.getElementById('pontosTotal').textContent = recompensas.pontos || 0;
+                document.getElementById('diasConsecutivos').textContent = recompensas.diasConsecutivos || 0;
+                document.getElementById('recordeStreak').textContent = recompensas.recordeStreak || 0;
+                
+                // Multiplicador
+                const multiplicador = obterMultiplicador(recompensas.diasConsecutivos || 0);
+                document.getElementById('multiplicadorAtual').textContent = multiplicador.toFixed(1) + 'x';
                 
                 // Atualizar conquistas
-                const conquistasGrid = document.getElementById('conquistasGrid');
-                const conquistasDisponiveis = ['🏅', '⭐', '🔥', '💪', '🎯', '👑'];
-                const conquistasDesbloqueadas = usuarioAtual.sistemaRecompensas.conquistas || [];
-                
-                conquistasGrid.innerHTML = '';
-                conquistasDisponiveis.forEach((icon, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'conquista' + (index < conquistasDesbloqueadas.length ? '' : ' locked');
-                    div.textContent = icon;
-                    div.title = conquistasDesbloqueadas[index] || 'Bloqueado';
-                    conquistasGrid.appendChild(div);
-                });
+                atualizarConquistas(recompensas.conquistas || []);
             }
+            
+            // Carregar tarefas
+            await carregarTarefas();
+            
+            // Carregar histórico de peso
+            await carregarHistoricoPeso();
+        }
+
+        function obterTituloNivel(nivel) {
+            if (nivel >= 20) return "Lenda 👑";
+            if (nivel >= 15) return "Mestre 🏆";
+            if (nivel >= 10) return "Dedicado 💪";
+            if (nivel >= 5) return "Comprometido ⭐";
+            return "Iniciante 🌱";
+        }
+
+        function obterMultiplicador(streak) {
+            if (streak >= 30) return 3.0;
+            if (streak >= 14) return 2.0;
+            if (streak >= 7) return 1.5;
+            return 1.0;
+        }
+
+        function atualizarConquistas(conquistas) {
+            const conquistasGrid = document.getElementById('conquistasGrid');
+            conquistasGrid.innerHTML = '';
+            
+            const totalConquistas = conquistas.length;
+            const conquistasDesbloqueadas = conquistas.filter(c => c.desbloqueada).length;
+            document.getElementById('conquistasTotal').textContent = conquistasDesbloqueadas + '/' + totalConquistas;
+            
+            conquistas.forEach(conquista => {
+                const div = document.createElement('div');
+                div.className = 'conquista' + (conquista.desbloqueada ? ' desbloqueada' : ' locked');
+                
+                const porcentagem = Math.min(100, (conquista.progresso / conquista.meta) * 100);
+                
+                div.innerHTML = `
+                    <span class="conquista-icone">${conquista.icone}</span>
+                    <div class="conquista-nome">${conquista.nome}</div>
+                    <div class="conquista-progresso">${conquista.progresso}/${conquista.meta}</div>
+                    <div class="conquista-bar">
+                        <div class="conquista-bar-fill" style="width: ${porcentagem}%"></div>
+                    </div>
+                `;
+                
+                div.title = conquista.descricao + (conquista.desbloqueada ? '\n✅ Desbloqueada!' : '');
+                
+                // Verificar se foi recém desbloqueada
+                if (conquista.desbloqueada && conquista.progresso === conquista.meta) {
+                    mostrarNotificacaoConquista(conquista);
+                }
+                
+                conquistasGrid.appendChild(div);
+            });
+        }
+
+        function mostrarNotificacaoConquista(conquista) {
+            // Verificar se já foi mostrada
+            const chave = 'conquista_mostrada_' + conquista.id;
+            if (localStorage.getItem(chave)) return;
+            
+            const notificacao = document.createElement('div');
+            notificacao.className = 'conquista-notification';
+            notificacao.innerHTML = `
+                <div class="conquista-notification-icon">${conquista.icone}</div>
+                <div class="conquista-notification-title">🎉 Conquista Desbloqueada!</div>
+                <div class="conquista-notification-desc">${conquista.nome}</div>
+            `;
+            
+            document.body.appendChild(notificacao);
+            
+            // Remover após 5 segundos
+            setTimeout(() => {
+                notificacao.style.animation = 'slideIn 0.5s ease reverse';
+                setTimeout(() => notificacao.remove(), 500);
+            }, 5000);
+            
+            // Marcar como mostrada
+            localStorage.setItem(chave, 'true');
+        }
+
+        async function carregarDashboard() {
+            if (!usuarioAtual) return;
             
             // Carregar tarefas
             await carregarTarefas();
@@ -1079,12 +1319,8 @@
                     if (userResponse.ok) {
                         usuarioAtual = await userResponse.json();
                         
-                        // Atualizar displays de recompensas
-                        if (usuarioAtual.sistemaRecompensas) {
-                            document.getElementById('pontosTotal').textContent = usuarioAtual.sistemaRecompensas.pontos || 0;
-                            document.getElementById('diasConsecutivos').textContent = usuarioAtual.sistemaRecompensas.diasConsecutivos || 0;
-                            document.getElementById('conquistasTotal').textContent = usuarioAtual.sistemaRecompensas.conquistas?.length || 0;
-                        }
+                        // Atualizar todas as recompensas (XP, pontos, nível, conquistas)
+                        atualizarRecompensasInterface();
                     }
                     
                     await carregarTarefas();
@@ -1099,15 +1335,31 @@
             if (!confirm('Deseja realmente remover esta tarefa?')) return;
             
             try {
+                console.log('Removendo tarefa ID:', tarefaId);
                 const response = await fetch(`${API_URL}/tarefas/${tarefaId}`, {
                     method: 'DELETE'
                 });
                 
-                if (response.ok) {
+                console.log('Status da resposta:', response.status);
+                
+                if (response.ok || response.status === 204) {
+                    // Recarregar usuário para atualizar recompensas
+                    const userResponse = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}`);
+                    if (userResponse.ok) {
+                        usuarioAtual = await userResponse.json();
+                        atualizarRecompensasInterface();
+                    }
+                    
+                    alert('✅ Tarefa removida com sucesso!');
                     await carregarTarefas();
+                } else {
+                    const errorText = await response.text();
+                    console.error('Erro ao remover:', errorText);
+                    alert('❌ Erro ao remover tarefa: ' + (errorText || 'Erro desconhecido'));
                 }
             } catch (error) {
                 console.error('Erro ao remover tarefa:', error);
+                alert('❌ Erro ao remover tarefa: ' + error.message);
             }
         }
 
@@ -1208,6 +1460,9 @@
                         // Atualizar barra de progresso
                         await atualizarBarraProgresso();
                         
+                        // Atualizar recompensas (XP, pontos, nível)
+                        atualizarRecompensasInterface();
+                        
                         // Recarregar histórico
                         await carregarHistoricoPeso();
                         
@@ -1225,20 +1480,52 @@
         }
         
         // Função para atualizar apenas a barra de progresso
+        function atualizarRecompensasInterface() {
+            if (usuarioAtual && usuarioAtual.sistemaRecompensas) {
+                const recompensas = usuarioAtual.sistemaRecompensas;
+                
+                // Atualizar Pontos/XP
+                document.getElementById('pontosTotal').textContent = recompensas.pontos || 0;
+                document.getElementById('xpAtual').textContent = recompensas.experiencia || 0;
+                
+                // Atualizar Nível
+                document.getElementById('nivelAtual').textContent = recompensas.nivel || 1;
+                document.getElementById('nivelTitulo').textContent = obterTituloNivel(recompensas.nivel || 1);
+                
+                // Atualizar Barra de XP
+                const xpProximoNivel = Math.pow((recompensas.nivel || 1), 2) * 100;
+                const xpNivelAtual = Math.pow((recompensas.nivel || 1) - 1, 2) * 100;
+                const xpProgresso = (recompensas.experiencia || 0) - xpNivelAtual;
+                const xpNecessario = xpProximoNivel - xpNivelAtual;
+                const porcentagemXP = Math.min(100, (xpProgresso / xpNecessario) * 100);
+                
+                document.getElementById('xpBar').style.width = porcentagemXP + '%';
+                document.getElementById('xpBar').textContent = Math.round(porcentagemXP) + '%';
+                document.getElementById('xpProximoNivel').textContent = xpProximoNivel;
+                
+                // Atualizar Streak
+                document.getElementById('diasConsecutivos').textContent = recompensas.diasConsecutivos || 0;
+                document.getElementById('recordeStreak').textContent = recompensas.recordeStreak || 0;
+                
+                // Atualizar Multiplicador
+                const multiplicador = obterMultiplicador(recompensas.diasConsecutivos || 0);
+                document.getElementById('multiplicadorAtual').textContent = multiplicador.toFixed(1) + 'x';
+                
+                // Atualizar Conquistas
+                atualizarConquistas(recompensas.conquistas || []);
+            }
+        }
+
         async function atualizarBarraProgresso() {
             try {
-                // Buscar peso inicial do primeiro registro
-                let pesoInicial = usuarioAtual.pesoAtual;
-                const responseRegistros = await fetch(`${API_URL}/registros-diarios`);
-                if (responseRegistros.ok) {
-                    const registros = await responseRegistros.json();
-                    const registrosUsuario = registros.filter(r => r.usuarioId === usuarioAtual.id && r.peso);
-                    if (registrosUsuario.length > 0) {
-                        // Ordenar por data mais antiga primeiro
-                        registrosUsuario.sort((a, b) => new Date(a.data) - new Date(b.data));
-                        pesoInicial = registrosUsuario[0].peso;
-                    }
+                // Buscar usuário atualizado do servidor
+                const userResponse = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}`);
+                if (userResponse.ok) {
+                    usuarioAtual = await userResponse.json();
                 }
+                
+                // Usar peso inicial do usuário (campo fixo)
+                const pesoInicial = usuarioAtual.pesoInicial || usuarioAtual.pesoAtual;
                 
                 // Atualizar display de peso inicial
                 document.getElementById('pesoInicialDisplay').textContent = pesoInicial.toFixed(1) + ' kg';

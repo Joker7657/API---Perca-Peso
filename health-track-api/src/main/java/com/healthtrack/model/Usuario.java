@@ -13,6 +13,7 @@ public class Usuario {
     private LocalDate dataNascimento;
     private String genero;
     private Double altura;
+    private Double pesoInicial;
     private Double pesoAtual;
     private Double pesoMeta;
     private Double imc;
@@ -48,6 +49,9 @@ public class Usuario {
     
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
+    
+    public Double getPesoInicial() { return pesoInicial; }
+    public void setPesoInicial(Double pesoInicial) { this.pesoInicial = pesoInicial; }
     
     public Double getPesoAtual() { return pesoAtual; }
     public void setPesoAtual(Double pesoAtual) { this.pesoAtual = pesoAtual; }

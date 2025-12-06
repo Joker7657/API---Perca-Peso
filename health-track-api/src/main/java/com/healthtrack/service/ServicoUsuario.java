@@ -22,6 +22,17 @@ public class ServicoUsuario {
             throw new IllegalArgumentException("Email já cadastrado");
         }
         
+        // Definir peso inicial se ainda não foi definido
+        if (usuario.getPesoInicial() == null && usuario.getPesoAtual() != null) {
+            usuario.setPesoInicial(usuario.getPesoAtual());
+        }
+        
+        // Inicializar sistema de recompensas
+        if (usuario.getSistemaRecompensas() == null) {
+            usuario.setSistemaRecompensas(new com.healthtrack.model.SistemaRecompensas());
+        }
+        usuario.getSistemaRecompensas().inicializarConquistas();
+        
         calcularMetricasSaude(usuario);
         return repositorioUsuario.salvar(usuario);
     }
